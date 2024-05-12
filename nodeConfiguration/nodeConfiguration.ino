@@ -11,13 +11,17 @@ Emilio Gallegos
 #include <SoftwareSerial.h> //Used to communicate serially with XBEE and NPK Sensor
 #include <DHT.h> //Used to read DHT11 Sensor
 
+//RS485 to TTL Protocol converter control pins
+#define RE 8
+#define DE 7
+
 #define DHTTYPE DHT11 // Specifying the tempertre and moisure sensor model
 #define DHTPIN 10 //Pin connected to DHT11 sensor
 DHT dht(DHTPIN, DHTTYPE); // Initializing object DHT11
 
-//RS485 to TTL Protocol converter control pins
-#define RE 8
-#define DE 7
+// Valves control pins
+#define valveNPK 12
+#define valveWater 13
 
 // Modbus RTU requests for reading NPK values
 const byte all_values_request[] = {0x01, 0x03, 0x00, 0x00, 0x00, 0x07, 0x04, 0x08};
@@ -34,6 +38,9 @@ void setup() {
   mod.begin(4800);
   pinMode(RE, OUTPUT);
   pinMode(DE, OUTPUT);
+  // Set valves controls pins as output
+  pinMode(valveNPK, OUTPUT);
+  pinMode(valveWater, OUTPUT);
   // Set the baud rate for the Xbee serial comunication
   XBee.begin(9600);
 }
@@ -142,6 +149,23 @@ void loop() {
   Serial.print(phosphorus_value);
   Serial.print(", Potassium: ");
   Serial.println(potassium_value);
+  
+  //-/-/-/-// Actuators //-/-/-/-//
+
+  // Activate nutrient valve
+  Serial.println("NPK valve start");
+  digitalWrite(valveNPK, HIGH);
+  delay(3000);
+  digitalWrite(valveNPK, LOW);
+  Serial.println("NPK valve end");
+
+  delay(500);
+  // Activate water valve
+  Serial.println("Water valve start");
+  digitalWrite(valveWater, HIGH);
+  delay(3000);
+  digitalWrite(valveWater, LOW);
+  Serial.println("Water valve end");
   
   //-/-/-/-// Comunication //-/-/-/-//
   if(XBee.available() > 0){
