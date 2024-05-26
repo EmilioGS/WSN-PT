@@ -1,0 +1,20 @@
+{
+  "name": "pt-final",
+  "version": "1.0.0",
+  "description": "Aplicacion para el monitoreo y control de una red lineal de sensores",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "app": "nodemon ./src/app.js"
+  },
+  "author": "Karla Benitez y Emilio Gallegos",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "firebase": "^10.12.0",
+    "firebase-admin": "^12.1.0",
+    "nodemon": "^3.1.0",
+    "pug": "^3.0.2"
+  }
+}

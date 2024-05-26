@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+html(lang="es")
+    head 
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width-device-width, initial-scale-1.0")
+        title dashboard  
+    body 
+        h1 Tu informacion
+        h2 Nombre: #{userName}
+        h2 Apellido: #{lastName} 
+        h2 Correo: #{email}
+        h2 Status: #{isAdmin}
+        h2 Tus nodos:
+            if listaNodos.length 
+                each nodo, index in listaNodos
+                    div
+                        span.medicion-info
+                            p= "Nodo: "+nodo.nodo
+                        
+            else
+                p No tienes nodos

@@ -1,0 +1,393 @@
+.desktop1-container {
+  width: 100%;
+  display: flex;
+  overflow: auto;
+  min-height: 100vh;
+  align-items: center;
+  flex-direction: column;
+}
+.desktop1-desktop1 {
+  width: 100%;
+  height: 1024px;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  align-items: flex-start;
+  flex-shrink: 0;
+  background-color: rgba(255, 255, 255, 1);
+}
+.desktop1-frame1 {
+  top: 0px;
+  left: 0px;
+  width: 1000px;
+  height: 93px;
+  display: flex;
+  overflow: hidden;
+  position: absolute;
+  align-items: flex-start;
+  flex-shrink: 0;
+  background-color: rgba(32, 57, 1, 1);
+}
+.desktop1-component4 {
+  top: 33px;
+  left: 1127px;
+  width: 37px;
+  height: 37px;
+  display: flex;
+  overflow: hidden;
+  position: absolute;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+.desktop1-group {
+  top: 3.0833332538604736px;
+  left: 3.0833332538604736px;
+  width: 30.83333396911621px;
+  height: 30.83333396911621px;
+  display: flex;
+  position: absolute;
+  align-items: flex-start;
+  flex-shrink: 1;
+}
+.desktop1-vector {
+  top: 5.395833492279053px;
+  left: 5.395833969116211px;
+  width: 20px;
+  height: 22px;
+  position: absolute;
+}
+.desktop1-vector1 {
+  top: 0px;
+  left: 0px;
+  width: 31px;
+  height: 31px;
+  position: absolute;
+}
+.desktop1-rectangle2 {
+  top: 27px;
+  left: 873px;
+  width: 160px;
+  height: 51px;
+  position: absolute;
+}
+.desktop1-text {
+  top: 38px;
+  left: 904px;
+  color: rgba(255, 255, 255, 1);
+  height: auto;
+  position: absolute;
+  font-size: 20px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+.desktop1-text02 {
+  top: 38px;
+  left: 397px;
+  color: rgba(255, 255, 255, 1);
+  height: auto;
+  position: absolute;
+  font-size: 20px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+.desktop1-text04 {
+  top: 35px;
+  left: 510px;
+  color: rgba(255, 255, 255, 1);
+  height: auto;
+  position: absolute;
+  font-size: 20px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+.desktop1-text06 {
+  top: 38px;
+  left: 668px;
+  color: rgba(255, 255, 255, 1);
+  height: auto;
+  position: absolute;
+  font-size: 20px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+.desktop1-vector2 {
+  top: 937px;
+  left: 1297px;
+  width: 46px;
+  height: 49px;
+  position: absolute;
+}
+.desktop1-text08 {
+  top: 649px;
+  left: 50px;
+  color: rgba(0, 0, 0, 1);
+  width: 897px;
+  height: auto;
+  position: absolute;
+  font-size: 24px;
+  font-style: Medium;
+  text-align: justified;
+  font-family: Poppins;
+  font-weight: 500;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+.desktop1-image31024x10241 {
+  top: 0px;
+  left: 39px;
+  width: 75px;
+  height: 95px;
+  position: absolute;
+}
+.desktop1-upiitalogo1 {
+  top: 6px;
+  left: 1297px;
+  width: 103px;
+  height: 81px;
+  position: absolute;
+}
+.frame-container {
+  width: 100%;
+  display: flex;
+  overflow: auto;
+  min-height: 100vh;
+  align-items: center;
+  flex-direction: column;
+}
+.frame-frame {
+  width: 100%;
+  height: 848px;
+  display: flex;
+  position: relative;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+.frame-image34 { 
+  top: 57px;
+  left: 989px;
+  width: 325px;
+  height: 438px;
+  position: absolute;
+}
+.frame-frame37 {
+  top: 815px;
+  left: 0px;
+  width: 1000px;
+  height: 130px;
+  display: flex;
+  overflow: hidden;
+  position: absolute;
+  align-items: flex-start;
+  flex-shrink: 0;
+  background-color: rgba(21, 37, 0, 1);
+}
+.frame-text {
+  top: 49px;
+  left: 470px;
+  color: rgba(255, 255, 255, 1);
+  height: auto;
+  position: absolute;
+  font-size: 12px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Quicksand;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+.frame-text02 {
+  top: 49px;
+  left: 628px;
+  color: rgba(255, 255, 255, 1);
+  height: auto;
+  position: absolute;
+  font-size: 12px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Quicksand;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+.frame-text04 {
+  top: 49px;
+  left: 765px;
+  color: rgba(255, 255, 255, 1);
+  height: auto;
+  position: absolute;
+  font-size: 12px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Quicksand;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+.frame-group5 {
+  top: 35px;
+  left: 54px;
+  width: 68px;
+  height: 68px;
+  display: flex;
+  position: absolute;
+  align-items: flex-start;
+  flex-shrink: 1;
+}
+.frame-vector1 {
+  top: 6.25301456451416px;
+  left: 24.91452407836914px;
+  width: 18px;
+  height: 32px;
+  position: absolute;
+}
+.frame-vector2 {
+  top: 30.212678909301758px;
+  left: 55.2741813659668px;
+  width: 15px;
+  height: 34px;
+  position: absolute;
+}
+.frame-vector3 {
+  top: 42.44297790527344px;
+  left: 3.1263718605041504px;
+  width: 14px;
+  height: 34px;
+  position: absolute;
+}
+.frame-line1 {
+  top: 30.909221649169922px;
+  left: 32.969844818115234px;
+  width: 25px;
+  height: 1px;
+  position: absolute;
+}
+.frame-ellipse2 {
+  top: 0px;
+  left: 0px;
+  width: 68px;
+  height: 68px;
+  position: absolute;
+  box-sizing: content-box;
+  border-color: rgba(255, 255, 255, 1);
+  border-style: solid;
+  border-width: 2px;
+}
+.frame-vector {
+  top: 38px;
+  left: 1311px;
+  width: 46px;
+  height: 49px;
+  position: absolute;
+}
+.frame-text06 {
+  top: 236px;
+  left: 31px;
+  color: rgba(1, 1, 1, 1);
+  width: 915px;
+  height: auto;
+  position: absolute;
+  font-size: 20px;
+  font-style: Regular;
+  text-align: center;
+  font-family: Belleza;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+.frame-text08 {
+  top: 394px;
+  left: 28px;
+  color: rgba(1, 1, 1, 1);
+  width: 915px;
+  height: auto;
+  position: absolute;
+  font-size: 22px;
+  font-style: Regular;
+  text-align: center;
+  font-family: Belleza;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+.frame-text12 {
+  top: 15px;
+  left: 111px;
+  color: rgba(1, 1, 1, 1);
+  width: 729px;
+  height: auto;
+  position: absolute;
+  font-size: 26px;
+  font-style: Regular;
+  text-align: center;
+  font-family: Belleza;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+.frame-text14 {
+  top: 71px;
+  left: 28px;
+  color: rgba(1, 1, 1, 1);
+  width: 917px;
+  height: auto;
+  position: absolute;
+  font-size: 26px;
+  font-style: Regular;
+  text-align: center;
+  font-family: Belleza;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+.frame-rectangle3 {
+  top: 719px;
+  left: 1117px;
+  width: 169px;
+  height: 71px;
+  position: absolute;
+}
+.frame-text16 {
+  top: 734px;
+  left: 1145px;
+  color: rgba(255, 255, 255, 1);
+  width: 126px;
+  height: auto;
+  position: absolute;
+  font-size: 12px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+html(lang="es")
+    head 
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css")
+        style.
+            .user-info {
+                display: inline-block;
+                margin-right: 10px;
+            }
+            .action-buttons {
+                display: inline-block;
+            }
+            .action-buttons form {
+                display: inline;
+            }
+        title Prueba 
+    body
+        h1 Lista de usuarios:
+        if userList.length 
+            each person, index in userList
+                div.user
+                    span.user-info
+                        p= person.idUser + " " + person.name + " " + person.lastName
+                    span.action-buttons
+                        form(action="adminActions/deleteUser" method="post" style="display:inline")
+                            input(type="hidden", name="idDelete", value=person.idUser)
+                            button(type="submit") 
+                                i.fas.fa-trash-alt
+
+                        form(action="adminActions/updateUser" method="get" style="display:inline")
+                            input(type="hidden", name="idUpdate", value=person.idUser)
+                            button(type="submit")
+                                i.fas.fa-edit  
+        else
+            p No hay usuarios disponibles
+              
+        div#add-user
+            h2 Agregar Usuario
+            form(id="formAddUser", action="adminActions/addUser" method="post")
+                input(type="text", name="name", placeholder="Nombre")
+                input(type="text", name="lastName", placeholder="Apellido")
+                input(type="email", name="email", placeholder="email")
+                p Admin: 
+                        select(name="adminFlag")
+                                option(value="0") No
+                                option(value="1") Sí
+                        input(type="text", name="node", placeholder="nodo")
+                        input(type="password", name="password", placeholder="Contraseña")
+                        br
+                        input(type="submit", name="btnAdd", value="Agregar Usuario")
+        div#update-user
+            h2 Actualizar Usuario
+            form(id="formUpdateUser", action="adminActions/updateUser" method="post")
+                p id del usuario: 
+                    select(name="idUpdate")
+                        option(value="1") 1
+                        option(value="2") 2
+                        option(value="3") 3
+                input(type="text", name="name", placeholder="Nombre")
+                input(type="text", name="lastName", placeholder="Apellido")
+                input(type="email", name="email", placeholder="correo")
+                p Admin: 
+                    select(name="adminFlag")
+                        option(value="0") No
+                        option(value="1") Sí
+                input(type="text", name="node", placeholder="nodo")
+                br
+                input(type="submit", name="btnUpdate", value="Actualizar Usuario")
+                
+            
