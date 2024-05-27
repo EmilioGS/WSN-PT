@@ -1,92 +1,54 @@
 doctype html
-html(lang="english")
-  head
-    title exported project
-    meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    meta(charset="utf-8")
-    meta(property="twitter:card" content="summary_large_image")
+html 
+    head
+        meta(charset='UTF-8')
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        title Proyecto Terminal
+        link(href="/css/styles.css" rel="stylesheet")
+    body 
+        header.header
+            nav.nav 
+                .nav-logo-ipn
+                    img(src="/img/Escudo-IPN.png" alt="IPN" title="Instituto Politécnico Nacional")
+                button.nav-toggle
+                    svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16")
+                        path(fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5")
 
-    style(data-tag="reset-style-sheet").
-      html {  line-height: 1.15; }
-      body {  margin: 0; }
-      * {  box-sizing: border-box;  border-width: 0;  border-style: solid; }
-      p, li, ul, pre, div, h1, h2, h3, h4, h5, h6, figure, blockquote, figcaption {  margin: 0;  padding: 0; }
-      button {  background-color: transparent; }
-      button, input, optgroup, select, textarea {  font-family: inherit;  font-size: 100%;  line-height: 1.15;  margin: 0; }
-      button, select {  text-transform: none; }
-      button, [type="button"], [type="reset"], [type="submit"] {  -webkit-appearance: button; }
-      button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner {  border-style: none;  padding: 0; }
-      button:-moz-focus, [type="button"]:-moz-focus, [type="reset"]:-moz-focus, [type="submit"]:-moz-focus {  outline: 1px dotted ButtonText; }
-      a {  color: inherit;  text-decoration: inherit; }
-      input {  padding: 2px 4px; }
-      img {  display: block; }
-      html { scroll-behavior: smooth; }
-    
-    style(data-tag="default-style-sheet").
-      html {
-        font-family: Noto Sans;
-        font-size: 16px;
-      }
+                ul.nav-menu
+                    li 
+                        a(href="#") Inicio 
+                    li 
+                        a(href="#") Iniciar sesión 
+                    li 
+                        a(href="#") Registrarse
+                .nav-logo-upiita
+                    img(src="/img/Escudo-UPIITA.png" alt="UPIITA" title="Unidad Profesional Interdisciplinaria en Ingeniería y Tecnologías Avanzadas")
 
-      body {
-        font-weight: 400;
-        font-style: normal;
-        text-decoration: none;
-        text-transform: none;
-        letter-spacing: normal;
-        line-height: 1.15;
-        color: var(--dl-color-theme-neutral-dark);
-        background-color: var(--dl-color-theme-neutral-light);
-        fill: var(--dl-color-theme-neutral-dark);
-      }
-    
-    link(rel="stylesheet" href="https://unpkg.com/animate.css@4.1.1/animate.css")
-    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" data-tag="font")
-    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" data-tag="font")
-    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" data-tag="font")
-    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" data-tag="font")
-    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" data-tag="font")
-    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" data-tag="font")
-    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" data-tag="font")
-    link(rel="stylesheet" href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css")
-  body
-    link(rel="stylesheet" href="/css/style.css")
-    div
-      link(href="/css/index.css" rel="stylesheet")
-      .frame1-container
-        .frame1-frame1
-          .frame1-component4
-            .frame1-group
-              svg(src="vectori372-rxg.svg" alt="VectorI372" class="frame1-vector")
-              svg(src="vectori372-anz.svg" alt="VectorI372" class="frame1-vector1")
-          svg(src="rectangle23814-nnu.svg" alt="Rectangle23814" class="frame1-rectangle2")
-          span.frame1-text Registrate
-          span.frame1-text2 Inicio
-          span.frame1-text4 Mi huerto
-          span.frame1-text6 Cerrar sesión
-      .frame-container
-        .frame-frame
-          img(src="image343735-x25-500w.png" alt="image343735" class="frame-image34")
-          .frame-frame37
-            span.frame-text Sobre nosotros
-            span.frame-text02 Contáctanos
-            span.frame-text04 Términos de privacidad
-            .frame-group5
-              svg(src="vector13911-3qqh.svg" alt="Vector13911" class="frame-vector1")
-              svg(src="vector23911-4emfk.svg" alt="Vector23911" class="frame-vector2")
-              svg(src="vector33911-mwg.svg" alt="Vector33911" class="frame-vector3")
-              svg(src="line13911-irz.svg" alt="Line13911" class="frame-line1")
-              img(src="ellipse23911-0vxd-200h.png" alt="Ellipse23911" class="frame-ellipse2")
-            svg(src="vector4429-vmf.svg" alt="Vector4429" class="frame-vector")
-          span.frame-text06
-            | Sistema telemático para el monitoreo y control de huertos urbanos basado en una red inalámbrica de sensores
-          span.frame-text08
-            | Karla Denisse Benítez Quiroz
-            br
-            | Emilio Gallegos Salinas
-          span.frame-text12 INSTITUTO POLITÉCNICO NACIONAL
-          span.frame-text14
-            | UNIDAD PROFESIONAL INTERDISCIPLINARIA EN INGENIERÍA Y TECNOLOGÍAS AVANZADAS
-          img(src="rectangle37338-fxa.svg" alt="Rectangle37338" class="frame-rectangle3")
-          span.frame-text16 Inicia Sesión
+        main 
+            .external-container
+                .internal-container
+                    h1 Sistema telemático  para el monitoreo y control de huertos urbanos basado en una red inalámbrica de sensores
+                    p Nuestro objetivo es el diseño e implementación de un sistema telemático basado en una red inalámbrica de sensores para el monitoreo de temperatura, humedad del sustrato, pH, y cantidad de nutrientes, además de control de riego y suministro de nutrientes a través de una aplicación de usuario.
+                .internal-container
+                    img(src="/img/img-main-page.png" alt="Huerto" title="Huerto")
 
+        footer.footer 
+            .footer-group1
+                .footer-box-1
+                    p#footer-paragraph-1 Sistema telemático  para el monitoreo y control de huertos urbanos basado en una red inalámbrica de sensores
+                    p#footer-paragraph-2 Proyecto de titulación
+                    hr
+                    p Presentado por: 
+                    p Benitez Quiroz Karla Denisse 
+                    p Gallegos Salinas Emilio
+                .footer-box-2
+                    p GitHub
+                    hr
+                    .footer-icon
+                        a(href="https://github.com/EmilioGS/WSN-PT" target="_blank")
+                            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16")
+                                path(d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8") 
+            .footer-group2
+                small Instituto Politécnico Nacional
+                    b  2024
+    script(src="/index.js")
