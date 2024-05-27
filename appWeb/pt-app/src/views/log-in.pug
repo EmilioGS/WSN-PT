@@ -3,9 +3,9 @@ html
     head
         meta(charset='UTF-8')
         meta(name="viewport" content="width=device-width, initial-scale=1.0")
-        title Proyecto Terminal
+        title Inicio de Sesion
         link(href="/css/styles.css" rel="stylesheet")
-    body 
+    body
         header.header
             nav.nav 
                 .nav-logo-ipn
@@ -21,37 +21,18 @@ html
                         a(href="log-in") Iniciar sesión 
                     li 
                         a(href="#") Registrarse
-                    li
-                        a(href="log-in/mySession")
-                            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16")
-                                path(d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0")
-                                path(fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1")
                 .nav-logo-upiita
                     img(src="/img/Escudo-UPIITA.png" alt="UPIITA" title="Unidad Profesional Interdisciplinaria en Ingeniería y Tecnologías Avanzadas")
-
         main 
             .external-container
-                .internal-container 
-                    h1 Bienvenido #{usuario} 
-                    h2 Mediciones:
-                        if listMediciones.length 
-                            each medicion, index in listMediciones
-                                div
-                                    span.medicion-info
-                                        p= "Medicion: "+medicion.idMedicion + " Nodo: "+medicion.idNodo + " Hora: "+medicion.hora+" temperatura: "+medicion.temp+" humedad: "+medicion.humedad+" nitrogeno: "+medicion.n+" potasio: "+medicion.p+" fosoforo: "+medicion.k  
-                                    
-                        else
-                            p No hay mediciones disponibles
-
-                    h2 Suministros:
-                        if listSuministros.length 
-                            each suministro, index in listSuministros
-                                div
-                                    span.suministro-info
-                                        p= "Suministro: " +suministro.idSuministro + " Nodo: "+ suministro.idNodo + " Hora: "+suministro.hora+" Tipo: "+suministro.tipo 
-                                    
-                        else
-                            p No hay suministros disponibles
+                .internal-container
+                    form(id="formUsuario",action="user/log-in", method="post") 
+                        h1= title 
+                        div1 Correo: 
+                            input(type='email', name='email') 
+                        div2 Contraseña: 
+                            input(type="password", name="contrasenia")
+                            input(type="submit", name="btnEnviar", value="Enviar")
         footer.footer 
             .footer-group1
                 .footer-box-1
@@ -72,3 +53,6 @@ html
                 small Instituto Politécnico Nacional
                     b  2024
     script(src="/index.js")
+
+        
+            

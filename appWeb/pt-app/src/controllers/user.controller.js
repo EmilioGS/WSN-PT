@@ -113,7 +113,6 @@ function showDashboard(res, result){
                 p: resultMedicion[i].potasio,
                 k: resultMedicion[i].fosforo,
                 idNodo: resultMedicion[i].idNodo
-
             };
         }
         readUser.query('SELECT s.* FROM Suministro s JOIN Usuario u ON s.idUsuario_ejecutor = u.idUsuario WHERE u.idUsuario = ?;', [userID], (req, resultSuministro) => {
