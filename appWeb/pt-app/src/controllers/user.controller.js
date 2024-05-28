@@ -15,6 +15,27 @@ app.use(session({
 const readUser = require('../models/user.model'); 
 
 module.exports={
+    registerUser:(req,res)=>{
+        console.log("Estoy registrando");
+        const { name, last_name1, last_name2, birthday, gender, email, isAdmin, node, password } = req.body;
+        readUser.query('INSERT INTO Usuario (nombre, apellido, correo, bandera_administrador, nodo, contrasenia) VALUES (?, ?, ?, ?, ?, ?);', [name, last_name1, email, isAdmin, node, password], (err,result)=>{
+            if (err) {
+                console.error(err);
+                res.status(500).send("Error al agregar usuario");
+                return;
+            }else{
+                readUser.query('SET @idUsuario = LAST_INSERT_ID();');
+                readUser.query('INSERT INTO Usuario_tiene_Nodo (Usuario_idUsuario, Nodo_idNodo) VALUES (@idUsuario,?)', [node], (err, result) => {
+                    if (err) {
+                        console.error(err);
+                        res.status(500).send("Error al agregar usuario");
+                        return;
+                    }
+                })
+            }
+            res.redirect('/');
+        });
+    },
     //Authentication function
     authLogin:(req,res)=>{
         console.log("Validar inicio de sesion")

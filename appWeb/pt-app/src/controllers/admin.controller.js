@@ -8,7 +8,7 @@ const readUser = require('../models/user.model');
 module.exports={
     //Function that gets all users in table Usuario
     getAllUsers:(req,res)=>{
-        readUser.query('SELECT * FROM Usuario_tiene_Nodo', (req,result)=>{
+        readUser.query('SELECT * FROM Usuario', (req,result)=>{
             res.send(result);
         });
         

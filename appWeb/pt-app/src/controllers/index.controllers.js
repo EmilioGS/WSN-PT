@@ -12,6 +12,11 @@ routerLogIn.get('/',(req,res)=>{//metodo y ruta
     res.render('log-in', {title}); //('file.pug,{const to render})
 });
 
+routerLogIn.get('/register',(req,res)=>{//metodo y ruta
+    res.render('registerUserView'); //('file.pug,{const to render})
+});
+
+
 module.exports= routerLogIn; //export routerLogIn
 
 

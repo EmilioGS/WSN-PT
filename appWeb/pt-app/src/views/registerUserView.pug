@@ -27,7 +27,7 @@ html
 
         main 
             .forms-container
-                form(id="form", action="user/log-in", method="post")
+                form(id="form", action="register/user", method="post")
                     .forms
                         h1 Registro
                         .forms-group
@@ -56,6 +56,16 @@ html
                             input(type="email"  id="email" name="email" required="true")
                             span.bar 
                             label.forms-label(for="email") Correo Electrónico
+                        p Tipo de usuario
+                        .forms-radio-group
+                            input(type="radio" id="isAdmin" name="isAdmin" value="1")
+                            label(for="isAdmin") Es administrador
+                            input(type="radio" id="isAdmin" name="isAdmin" value="0")
+                            label(for="isAdmin") Es propietario
+                        .forms-group
+                            input(type="number"  id="node" name="node" required="true")
+                            span.bar 
+                            label.forms-label(for="node") Nodo
                         .forms-group
                             input(type="password"  id="password" name="password" required="true")
                             span.bar 

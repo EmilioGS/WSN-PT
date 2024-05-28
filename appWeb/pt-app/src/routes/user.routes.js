@@ -6,6 +6,7 @@ const session = require('express-session'); //for express sessions
 const adminController=require('../controllers/admin.controller'); 
 //Import user.controller in obj userController
 const userController=require('../controllers/user.controller'); 
+const routerLogIn = require('../controllers/index.controllers');
 
 //Import routerUser; ==>'/user'
 const routerUser = express.Router(); //router
@@ -25,7 +26,8 @@ routerUser.post('/adminActions/updateUser', adminController.updateUser);
 
 //NORMAL USER ACTIONS/////////////
 routerUser.post('/log-in', userController.authLogin);
-routerUser.get('/log-in/mySession', userController.showInfo)
+routerUser.get('/log-in/mySession', userController.showInfo);
+routerLogIn.post('/register/user', userController.registerUser);
 
 //Export routerUser
 module.exports = routerUser; 
