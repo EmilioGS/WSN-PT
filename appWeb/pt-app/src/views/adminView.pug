@@ -40,8 +40,18 @@ html(lang="es")
             h2 Agregar Usuario
             form(id="formAddUser", action="adminActions/addUser" method="post")
                 input(type="text", name="name", placeholder="Nombre")
-                input(type="text", name="lastName", placeholder="Apellido")
+                input(type="text", name="lastName", placeholder="Primer Apellido")
+                input(type="text", name="lastName2", placeholder="Segundo Apellido")
                 input(type="email", name="email", placeholder="email")
+                p Fecha de nacimiento
+                        input(type="date"  id="birthday" name="birthday" required="true")
+                p Genero
+                    input(type="radio" id="male" name="gender" value="Masculino")
+                    label(for="male") Masculino
+                    input(type="radio" id="female" name="gender" value="Femenino")
+                    label(for="female") Femenino
+                    input(type="radio" id="noBinary" name="gender" value="No binario")
+                    label(for="female") No binario
                 p Admin: 
                         select(name="adminFlag")
                                 option(value="0") No
@@ -60,7 +70,17 @@ html(lang="es")
                         option(value="3") 3
                 input(type="text", name="name", placeholder="Nombre")
                 input(type="text", name="lastName", placeholder="Apellido")
+                input(type="text", name="lastName2", placeholder="Segundo Apellido")
                 input(type="email", name="email", placeholder="correo")
+                p Fecha de nacimiento
+                        input(type="date"  id="birthday" name="birthday")
+                p Genero
+                    input(type="radio" id="male" name="gender" value="Masculino")
+                    label(for="male") Masculino
+                    input(type="radio" id="female" name="gender" value="Femenino")
+                    label(for="female") Femenino
+                    input(type="radio" id="noBinario" name="gender" value="No binario")
+                    label(for="female") No binario
                 p Admin: 
                     select(name="adminFlag")
                         option(value="0") No
@@ -68,5 +88,10 @@ html(lang="es")
                 input(type="text", name="node", placeholder="nodo")
                 br
                 input(type="submit", name="btnUpdate", value="Actualizar Usuario")
+        div#add-node
+            h2 Agregar Nodo
+            form(id="formAddNode", action="adminActions/addNode" method="post")
+                input(type="text", name="grade", placeholder="Grado")
+                input(type="text", name="name", placeholder="Nombre")
+                input(type="submit", name="btnAddNodo", value="Agregar Nodo")
                 
-            

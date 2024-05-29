@@ -23,6 +23,7 @@ routerUser.get('/adminActions', adminController.adminActions);
 routerUser.post('/adminActions/addUser', adminController.addUser);
 routerUser.post('/adminActions/deleteUser', adminController.deleteUser);
 routerUser.post('/adminActions/updateUser', adminController.updateUser);
+routerUser.post('/adminActions/addNode', adminController.addNode);
 
 //NORMAL USER ACTIONS/////////////
 routerUser.post('/log-in', userController.authLogin);
