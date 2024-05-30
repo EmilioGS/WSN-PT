@@ -15,11 +15,18 @@
     background-color: var(--color8);
     padding: 30px;
     border-radius: 15px;
+    /*border: 3px solid red;*/
+    width: 80%; /*Ver que show*/
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
   
 .forms{
-    width: 100%;
-    margin: auto;
+    /*width: 100%;*/
+    max-width: 420px;
+    /*border: 3px solid blue;*/
+    margin: 10px auto;
 }
   
 form .forms-group{
@@ -30,13 +37,15 @@ form .forms-group{
 .forms-radio-group{
     display: flex;
     align-content: center;
-    /*border: 3px solid red;*/
+    flex-direction: column;
+    /*border: 3px solid purple;*/
     padding: 10px;
     color: var(--txtColor2);
 }
 
 .forms-radio-group input{
     accent-color: var(--color10);
+    margin: 10px auto;
 }
 
 input{
@@ -121,3 +130,11 @@ input:focus ~ .bar::before{
     border: none;
     border-radius: 5px;
 }
+
+/*@media screen and (min-width: 769px) {
+    .forms{
+        /*width: 100%;
+        max-width: 197px;
+        /*border: 3px solid orange;
+    }
+}*/

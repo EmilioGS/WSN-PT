@@ -6,6 +6,8 @@ html
         title Proyecto Terminal
         link(href="/css/styles.css" rel="stylesheet")
         link(href="/css/styles-forms.css" rel="stylesheet")
+        link(href="/css/styles-footer.css" rel="stylesheet")
+        link(href="/css/styles-nav.css" rel="stylesheet")
     body 
         header.header
             nav.nav 
@@ -17,11 +19,9 @@ html
 
                 ul.nav-menu
                     li 
-                        a(href="/html/index.html") Inicio 
+                        a(href="/") Inicio 
                     li 
-                        a(href="#") Iniciar sesión 
-                    li 
-                        a(href="/html/forms.html") Registrarse
+                        a(href="../log-in") Iniciar sesión 
                 .nav-logo-upiita
                     img(src="/img/Escudo-UPIITA.png" alt="UPIITA" title="Unidad Profesional Interdisciplinaria en Ingeniería y Tecnologías Avanzadas")
 
@@ -42,6 +42,7 @@ html
                             input(type="text"  id="last_name2" name="last_name2" required="true")
                             span.bar 
                             label.forms-label(for="last_name2") Apellido Materno
+                    .forms
                         div
                             p Fecha de nacimiento
                             input(type="date"  id="birthday" name="birthday" required="true")
@@ -52,16 +53,19 @@ html
                             label(for="male") Masculino
                             input(type="radio" id="female" name="gender" value="Femenino")
                             label(for="female") Femenino
+                            input(type="radio" id="no-ninary" name="gender" value="No binario")
+                            label(for="female") No binario
                         .forms-group
                             input(type="email"  id="email" name="email" required="true")
                             span.bar 
                             label.forms-label(for="email") Correo Electrónico
+                    .forms
                         p Tipo de usuario
                         .forms-radio-group
                             input(type="radio" id="isAdmin" name="isAdmin" value="1")
-                            label(for="isAdmin") Es administrador
+                            label(for="isAdmin") Administrador
                             input(type="radio" id="isAdmin" name="isAdmin" value="0")
-                            label(for="isAdmin") Es propietario
+                            label(for="isAdmin") Propietario
                         .forms-group
                             input(type="number"  id="node" name="node" required="true")
                             span.bar 
@@ -70,7 +74,7 @@ html
                             input(type="password"  id="password" name="password" required="true")
                             span.bar 
                             label.forms-label(for="password") Contraseña
-                        input(type="submit" class="btn" formnovalidate="formnovalidate" value="Enviar")
+                            input(type="submit" class="btn" formnovalidate="formnovalidate" value="Enviar")
 
         footer.footer 
             .footer-group1

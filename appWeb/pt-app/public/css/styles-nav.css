@@ -1,0 +1,111 @@
+/*navegation bar*/
+.header{
+    background-color: orange;
+    height: 90px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+
+.nav{
+    position: relative;
+    height: 90px;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    align-items: center;
+    background: var(--color2);
+    width: 100%;
+
+    /*border: 3px red solid;*/
+}
+
+.nav-logo-ipn img{
+    position: relative;
+    width: 70px;
+    padding: 10px;
+}
+
+.nav-logo-upiita img{
+    position: relative;
+    width: 80px;
+    padding: 10px;
+    margin-right: 20px;
+}
+
+.nav-menu{
+    display: flex;
+    align-items: center;
+}
+
+.nav-menu li{
+    margin: 0 10px;
+    list-style: none;
+}
+
+.nav-menu a{
+    position: relative;
+    text-decoration: none;
+    font-size: var(--L);
+    color: var(--color5);
+    font-weight: 400;
+    text-transform: uppercase;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.nav-menu a:hover{
+    background-color: var(--color5);
+    color: var(--color3);
+    transition: 0.5s;
+}
+
+.nav-toggle{
+    color: var(--color5);
+    background: none;
+    border: none;
+    padding: 30px;
+    cursor: pointer;
+
+    display: none;
+}
+
+.nav-toggle svg{
+    transform: scale(1.8);
+}
+
+@media screen and (max-width: 768px) {
+
+    .nav-logo-upiita{
+        display: none;
+    }
+
+    .nav-menu{
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        left: 0;
+        top: 90px;
+        background-color: var(--color12);
+        flex-direction: column;
+        padding-top: 50px;
+
+        left: 100%;
+        transition: left 0.3s;
+    }
+
+    .nav-menu a{
+        display: block;
+        margin-top: 10px;
+    }
+
+    .nav-toggle{
+        display: block;
+    }
+
+    .nav-menu_visible{
+        left: 0;
+    }
+}
