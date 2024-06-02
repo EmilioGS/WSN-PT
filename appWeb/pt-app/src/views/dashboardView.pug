@@ -22,8 +22,9 @@ html
                         a(href="/") Inicio 
                     li 
                         a(href="log-in") Iniciar sesión 
-                    li 
-                        a(href="#") Registrarse
+                    if esAdmin == 1
+                        li 
+                            a(href="/user/adminActions") Administrar
                     li
                         a(href="log-in/mySession")
                             svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16")
@@ -51,7 +52,7 @@ html
                             each suministro, index in listSuministros
                                 div
                                     span.suministro-info
-                                        p= "Suministro: " +suministro.idSuministro + " Nodo: "+ suministro.idNodo + " Hora: "+suministro.hora+" Tipo: "+suministro.tipo 
+                                        p= "Suministro: " +suministro.idSuministro + " Nodo: "+ suministro.idNodo + " Hora: "+suministro.hora+" Tipo: "+suministro.tipo+ "Usuario ejecutor:" + suministro.idUsuario_ejecutor
                                     
                         else
                             p No hay suministros disponibles

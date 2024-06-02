@@ -22,8 +22,9 @@ html
                         a(href="/") Inicio 
                     li 
                         a(href="log-in") Iniciar sesión 
-                    li 
-                        a(href="#") Registrarse
+                    if esAdmin == 1
+                        li 
+                            a(href="/user/adminActions") Administrar
                 .nav-logo-upiita
                     img(src="/img/Escudo-UPIITA.png" alt="UPIITA" title="Unidad Profesional Interdisciplinaria en Ingeniería y Tecnologías Avanzadas")
 
@@ -32,8 +33,11 @@ html
                 .internal-container 
                     h1 Tu informacion
                     h2 Nombre: #{userName}
-                    h2 Apellido: #{lastName} 
+                    h2 Primer apellido: #{lastName} 
+                    h2 Segundo apellido: #{lastName2} 
                     h2 Correo: #{email}
+                    h2 Fecha de nacimiento: #{birthday} 
+                    h2 Genero: #{gender} 
                     h2 Status: #{isAdmin}
                     h2 Tus nodos:
                         if listaNodos.length 
