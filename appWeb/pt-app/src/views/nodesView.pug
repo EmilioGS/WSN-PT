@@ -34,7 +34,7 @@ html
                     img(src="/img/Escudo-UPIITA.png" alt="UPIITA" title="Unidad Profesional Interdisciplinaria en Ingeniería y Tecnologías Avanzadas")
 
         main 
-            //.external-container
+            .external-container
                 .internal-container 
                     h1 Bienvenido #{usuario} 
                     h2 Mediciones:
@@ -56,41 +56,6 @@ html
                                     
                         else
                             p No hay suministros disponibles
-
-            .external-container
-                forms(id="nodesView", action="/log-in/myNode", method="post")  
-                    .internal.container
-                        input(type="radio" id="1" name="node1" value="Zanahoria")
-                        label(for="Zanahoria") Zanahoria
-                        img(src="/img/carrots.jpg" alt="Zanahoria" title="Zanahoria")
-                    .internal.container
-                        input(type="radio" id="2" name="node2" value="Espinaca")
-                        label(for="Espinaca") Espinaca
-                        img(src="/img/spinach.png" alt="Espinaca" title="Espinaca")
-                    .internal.container
-                        input(type="radio" id="3" name="node3" value="Lechuga")
-                        label(for="Lechuga") Lechuga
-                        img(src="/img/lettuce.jpg" alt="Lechuga" title="Lechuga")
-                    .internal.container
-                        input(type="radio" id="4" name="node4" value="Jitomate")
-                        label(for="Jitomate") Jitomate
-                        img(src="/img/tomate.png" alt="Jitomate" title="Jitomate")
-
-            //.external-container 
-                h1 Bienvenido a tu huerto #{usuario} 
-                .internal.container 
-                    input(type="button" value="Zanahorias")
-                        a(href="/log-in/myNode")
-                            img(src="/img/carrots.jpg" alt="Zanahoria" title="Zanahoria")
-                .internal.container 
-                    a(href="/log-in/myNode")
-                        img(src="/img/spinach.png" alt="Espinaca" title="Espinaca")
-                .internal.container 
-                    a(href="/log-in/myNode")
-                        img(src="/img/lettuce.jpg" alt="Lechuga" title="Lechuga")
-                .internal.container 
-                    a(href="/log-in/myNode")
-                        img(src="/img/tomate.png" alt="Jitomate" title="Jitomate")
         footer.footer 
             .footer-group1
                 .footer-box-1

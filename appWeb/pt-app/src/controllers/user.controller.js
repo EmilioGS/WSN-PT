@@ -14,6 +14,8 @@ app.use(session({
 //Import obj readUser which contains the user model where we make the database connection
 const readUser = require('../models/user.model'); 
 
+
+
 module.exports={
     registerUser:(req,res)=>{
         console.log("Estoy registrando");
@@ -58,7 +60,8 @@ module.exports={
                 console.log("Bienvenido, ingreso exitoso")
                 //res.status(200).send('Login successful');
                 //render the dashboardView.pug
-                showDashboard(res,result); //res is necessary to render the view; result is the object that contains the user info
+                //showDashboard(res,result); //res is necessary to render the view; result is the object that contains the user info
+                res.render('dashboardView');
             }else{//failed login
                 res.status(401).send('Invalid credentials');
                 console.log("Contraseña incorrecta");
@@ -107,7 +110,93 @@ module.exports={
                 //res.status(404).send('Usuario no encontrado :(');
             }
         });
-    }],   
+    }],
+
+    //Function where the personalized dashboard is shown 
+    showNode:(res, result)=>{
+        const zanahoriasButton = document.getElementById('zanahorias');
+        const espinacasButton = document.getElementById('espinacas');
+        const lechugaButton = document.getElementById('lechuga');
+        const tomateButton = document.getElementById('tomate');
+
+        zanahoriasButton.addEventListener('click', () => {
+        console.log('Seleccionaste zanahorias');
+        // Realiza la acción correspondiente a la selección de zanahorias
+        });
+
+        espinacasButton.addEventListener('click', () => {
+        console.log('Seleccionaste espinacas');
+        // Realiza la acción correspondiente a la selección de espinacas
+        });
+
+        lechugaButton.addEventListener('click', () => {
+        console.log('Seleccionaste lechuga');
+        // Realiza la acción correspondiente a la selección de lechuga
+        });
+
+        tomateButton.addEventListener('click', () => {
+        console.log('Seleccionaste tomate');
+        // Realiza la acción correspondiente a la selección de tomate
+        });
+
+
+        userName=result[0].nombre; 
+        userID = result[0].idUsuario;
+        esAdmin=result[0].bandera_administrador;
+        nodo=result[0].nodo; //este nodo estara dado por la seleccion del usuario
+        //console.log(`Bienvenido usuario ${userName} y ${userID}`);
+        const medicionesList = [];//create an empty array
+        const suminsitrosList = [];//create an empty array
+        readUser.query('SELECT m.* FROM Medicion m JOIN Usuario_tiene_Nodo utn ON m.idNodo = utn.Nodo_idNodo JOIN Usuario u ON utn.Usuario_idUsuario = u.idUsuario WHERE u.idUsuario = ?;', [userID], (req, resultMedicion) => {
+            //console.log(resultMedicion);
+            for (let i = 0; i < resultMedicion.length; i++) {
+                //One medicion => one element of the array (i)
+                medicionesList[i] = {
+                    // var in js array : var in result from DB query
+                    idMedicion: resultMedicion[i].idMedicion,
+                    hora: resultMedicion[i].hora,
+                    ph: resultMedicion[i].ph,
+                    temp: resultMedicion[i].temp,
+                    humedad: resultMedicion[i].humedad,
+                    n: resultMedicion[i].nitrogeno,
+                    p: resultMedicion[i].potasio,
+                    k: resultMedicion[i].fosforo,
+                    idNodo: resultMedicion[i].idNodo
+                };
+            } //console.log(medicionesList);
+            //readUser.query('SELECT s.* FROM Suministro s JOIN Usuario u ON s.idUsuario_ejecutor = u.idUsuario WHERE u.idUsuario = ?;'
+            
+            readUser.query('SELECT s.*, u.nombre FROM Suministro s JOIN Nodo n ON s.idNodo = n.idNodo JOIN Usuario u ON s.idUsuario_ejecutor = u.idUsuario WHERE n.idNodo = ?;', [nodo], (req, resultSuministro) => {
+                //console.log(resultSuministro);
+                for (let i = 0; i < resultSuministro.length; i++) {
+                    if(resultSuministro[i].bandera_tipo_suministro==0){
+                        tipoSuministro=="Riego";
+                    }else
+                    tipoSuministro="Inyeccion de nutrientes";
+                    //One suministro => one element of the array (i)
+                    //console.log(resultSuministro[i].idSuministro);
+                        suminsitrosList[i] = {
+                            // var in js array : var in result from DB query
+                            idSuministro: resultSuministro[i].idSuministro,
+                            hora: resultSuministro[i].hora,
+                            tipo: tipoSuministro,
+                            idNodo: resultSuministro[i].idNodo,
+                            idUsuario_ejecutor: resultSuministro[i].nombre
+                        };   
+                    
+                }//console.log(suminsitrosList);
+                res.render('dashboardView', {
+                    usuario : userName, 
+                    listMediciones :medicionesList, 
+                    listSuministros:suminsitrosList,
+                    esAdmin : esAdmin
+                });//pug:js
+            });
+            
+        });
+        
+    }
+
         
 }
 
@@ -120,61 +209,3 @@ function isAuthenticated(req, res, next) {
     }
 }
 
-//Function where the personalized dashboard is shown 
-function showDashboard(res, result){
-    userName=result[0].nombre; 
-    userID = result[0].idUsuario;
-    esAdmin=result[0].bandera_administrador;
-    nodo=result[0].nodo; //este nodo estara dado por la seleccion del usuario
-    //console.log(`Bienvenido usuario ${userName} y ${userID}`);
-    const medicionesList = [];//create an empty array
-    const suminsitrosList = [];//create an empty array
-    readUser.query('SELECT m.* FROM Medicion m JOIN Usuario_tiene_Nodo utn ON m.idNodo = utn.Nodo_idNodo JOIN Usuario u ON utn.Usuario_idUsuario = u.idUsuario WHERE u.idUsuario = ?;', [userID], (req, resultMedicion) => {
-        //console.log(resultMedicion);
-        for (let i = 0; i < resultMedicion.length; i++) {
-            //One medicion => one element of the array (i)
-            medicionesList[i] = {
-                // var in js array : var in result from DB query
-                idMedicion: resultMedicion[i].idMedicion,
-                hora: resultMedicion[i].hora,
-                ph: resultMedicion[i].ph,
-                temp: resultMedicion[i].temp,
-                humedad: resultMedicion[i].humedad,
-                n: resultMedicion[i].nitrogeno,
-                p: resultMedicion[i].potasio,
-                k: resultMedicion[i].fosforo,
-                idNodo: resultMedicion[i].idNodo
-            };
-        } //console.log(medicionesList);
-        //readUser.query('SELECT s.* FROM Suministro s JOIN Usuario u ON s.idUsuario_ejecutor = u.idUsuario WHERE u.idUsuario = ?;'
-        
-        readUser.query('SELECT s.*, u.nombre FROM Suministro s JOIN Nodo n ON s.idNodo = n.idNodo JOIN Usuario u ON s.idUsuario_ejecutor = u.idUsuario WHERE n.idNodo = ?;', [nodo], (req, resultSuministro) => {
-            //console.log(resultSuministro);
-            for (let i = 0; i < resultSuministro.length; i++) {
-                if(resultSuministro[i].bandera_tipo_suministro==0){
-                    tipoSuministro=="Riego";
-                }else
-                tipoSuministro="Inyeccion de nutrientes";
-                //One suministro => one element of the array (i)
-                //console.log(resultSuministro[i].idSuministro);
-                    suminsitrosList[i] = {
-                        // var in js array : var in result from DB query
-                        idSuministro: resultSuministro[i].idSuministro,
-                        hora: resultSuministro[i].hora,
-                        tipo: tipoSuministro,
-                        idNodo: resultSuministro[i].idNodo,
-                        idUsuario_ejecutor: resultSuministro[i].nombre
-                    };   
-                
-            }//console.log(suminsitrosList);
-            res.render('dashboardView', {
-                usuario : userName, 
-                listMediciones :medicionesList, 
-                listSuministros:suminsitrosList,
-                esAdmin : esAdmin
-            });//pug:js
-        });
-        
-    });
-    
-}
