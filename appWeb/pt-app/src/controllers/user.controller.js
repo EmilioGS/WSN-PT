@@ -56,12 +56,13 @@ module.exports={
                 req.session.userEmail = userEmail;
                 //Save if is Admin in the session
                 req.session.isAdmin = result[0].bandera_administrador == 1;
-
+                req.session.idUsuario=result[0].idUsuario;
+                const idUser = result[0].idUsuario;
                 console.log("Bienvenido, ingreso exitoso")
                 //res.status(200).send('Login successful');
                 //render the dashboardView.pug
-                //showDashboard(res,result); //res is necessary to render the view; result is the object that contains the user info
-                res.render('dashboardView');
+                showDashboard(res, idUser); //res is necessary to render the view; result is the object that contains the user info
+                
             }else{//failed login
                 res.status(401).send('Invalid credentials');
                 console.log("Contraseña incorrecta");
@@ -113,36 +114,13 @@ module.exports={
     }],
 
     //Function where the personalized dashboard is shown 
-    showNode:(res, result)=>{
-        const zanahoriasButton = document.getElementById('zanahorias');
-        const espinacasButton = document.getElementById('espinacas');
-        const lechugaButton = document.getElementById('lechuga');
-        const tomateButton = document.getElementById('tomate');
-
-        zanahoriasButton.addEventListener('click', () => {
-        console.log('Seleccionaste zanahorias');
-        // Realiza la acción correspondiente a la selección de zanahorias
-        });
-
-        espinacasButton.addEventListener('click', () => {
-        console.log('Seleccionaste espinacas');
-        // Realiza la acción correspondiente a la selección de espinacas
-        });
-
-        lechugaButton.addEventListener('click', () => {
-        console.log('Seleccionaste lechuga');
-        // Realiza la acción correspondiente a la selección de lechuga
-        });
-
-        tomateButton.addEventListener('click', () => {
-        console.log('Seleccionaste tomate');
-        // Realiza la acción correspondiente a la selección de tomate
-        });
-
-
-        userName=result[0].nombre; 
-        userID = result[0].idUsuario;
-        esAdmin=result[0].bandera_administrador;
+    showNode:(req, res)=>{
+        const vegetal = req.query.vegetal;
+        // Aquí puedes manejar la lógica según el vegetal seleccionado
+        console.log(`Has seleccionado: ${vegetal}`);
+        res.send(`Has seleccionado: ${vegetal}`);
+        const userID = req.session.idUsuario; //obtain user id form express session
+        
         nodo=result[0].nodo; //este nodo estara dado por la seleccion del usuario
         //console.log(`Bienvenido usuario ${userName} y ${userID}`);
         const medicionesList = [];//create an empty array
@@ -208,4 +186,20 @@ function isAuthenticated(req, res, next) {
         res.status(401).send('You are not authenticated');
     }
 }
+
+function showDashboard(res, idUser){
+    nodosList=[];
+    readUser.query('SELECT Nodo_idNodo FROM Usuario_tiene_Nodo WHERE Usuario_idUsuario=?; ',[idUser], (req,resNodos)=>{
+        for (let i = 0; i < resNodos.length; i++) {
+            //One nodo => one element of the array (i)
+            nodosList[i] = {
+                // var in js array : var in result from DB query
+                idNodo:resNodos[i].Nodo_idNodo
+            };
+        }//console.log(nodosList);
+        res.render('dashboardView', {listaNodos:nodosList});
+    });
+}
+
+
 

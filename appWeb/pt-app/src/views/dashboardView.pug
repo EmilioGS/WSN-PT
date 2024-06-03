@@ -56,25 +56,31 @@ html
                                     
                         else
                             p No hay suministros disponibles
-
             .external-container
-                forms(id="nodesView", action="/log-in/myNode", method="post")  
-                    .internal.container
-                        input(type="radio" id="1" name="node1" value="Zanahoria")
-                        label(for="Zanahoria") Zanahoria
-                        img(src="/img/carrots.jpg" alt="Zanahoria" title="Zanahoria")
-                    .internal.container
-                        input(type="radio" id="2" name="node2" value="Espinaca")
-                        label(for="Espinaca") Espinaca
-                        img(src="/img/spinach.png" alt="Espinaca" title="Espinaca")
-                    .internal.container
-                        input(type="radio" id="3" name="node3" value="Lechuga")
-                        label(for="Lechuga") Lechuga
-                        img(src="/img/lettuce.jpg" alt="Lechuga" title="Lechuga")
-                    .internal.container
-                        input(type="radio" id="4" name="node4" value="Jitomate")
-                        label(for="Jitomate") Jitomate
-                        img(src="/img/tomate.png" alt="Jitomate" title="Jitomate")
+                h2 Nodos
+
+                    if listaNodos.length 
+                        each nodo, index in listaNodos
+                            div
+                                if nodo.idNodo==1
+                                    .internal-container
+                                        a(action="user/log-in/myNode",href="/log-in/myNode?vegetal=zanahoria" onClick="funcion")
+                                            img(src="/img/carrots.jpg" alt="Zanahoria" title="Zanahoria")
+                                                
+                                else if nodo.idNodo==2
+                                    .internal-container 
+                                        a(action="user/log-in/myNode",href="/log-in/myNode?vegetal=espinaca")
+                                            img(src="/img/spinach.png" alt="Espinaca" title="Espinaca")
+                                else if nodo.idNodo==3
+                                    .internal-container 
+                                        a(action="user/log-in/myNode",href="/log-in/myNode?vegetal=lechuga")
+                                            img(src="/img/lettuce.jpg" alt="Lechuga" title="Lechuga")
+                                else if nodo.idNodo==4
+                                    .internal-container 
+                                        a(action="user/log-in/myNode",href="/log-in/myNode?vegetal=jitomate")
+                                            img(src="/img/tomate.png" alt="Jitomate" title="Jitomate")
+                    else
+                        p No hay nodos disponibles
 
             //.external-container 
                 h1 Bienvenido a tu huerto #{usuario} 

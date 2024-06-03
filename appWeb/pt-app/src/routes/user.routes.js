@@ -29,7 +29,7 @@ routerUser.post('/adminActions/addNode', adminController.addNode);
 routerUser.post('/log-in', userController.authLogin);
 routerUser.get('/log-in/mySession', userController.showInfo);
 routerLogIn.post('/register/user', userController.registerUser);
-routerUser.post('/log-in/myNode', userController.showNode);/* Add recently*/
+routerUser.get('/log-in/myNode', userController.showNode);/* Add recently*/
 
 //Export routerUser
 module.exports = routerUser; 
