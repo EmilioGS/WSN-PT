@@ -8,8 +8,10 @@ Emilio Gallegos
 */
 
 #include <stdio.h> // Standard Input Output library
-#include <SoftwareSerial.h> //Used to communicate serially with XBEE and NPK Sensor
-#include <DHT.h> //Used to read DHT11 Sensor
+#include <SoftwareSerial.h> // Used to communicate serially with XBEE and NPK Sensor
+#include <DHT.h> // Used to read DHT11 Sensor
+#include <XBee.h> // Andrewrapp's XBee Library 
+#include "LowPower.h" // Library to reduce current consuption
 
 //RS485 to TTL Protocol converter control pins
 #define RE 8
@@ -26,8 +28,24 @@ DHT dht(DHTPIN, DHTTYPE); // Initializing object DHT11
 // Modbus RTU requests for reading NPK values
 const byte all_values_request[] = {0x01, 0x03, 0x00, 0x00, 0x00, 0x07, 0x04, 0x08};
 
-SoftwareSerial XBee(3, 2); //Rx, Tx from the XBee module
 SoftwareSerial mod(4, 5); //R0, DI 
+
+SoftwareSerial XBee_Serial(3, 2); //Rx, Tx from the XBee module
+
+// Create the XBee object
+XBee xbee = XBee();
+
+uint8_t payload[40];
+
+// SH + SL Address of Alpha
+XBeeAddress64 addr64_Alpha = XBeeAddress64(0x0013a200, 0x4213da49);
+ZBTxRequest zbTx_A = ZBTxRequest(addr64_Alpha, payload, sizeof(payload));
+ZBTxStatusResponse txStatus_A = ZBTxStatusResponse();
+
+// SH + SL Address of Charlie
+XBeeAddress64 addr64_Charlie = XBeeAddress64(0x0013a200, 0x4213de41);
+ZBTxRequest zbTx_C = ZBTxRequest(addr64_Charlie, payload, sizeof(payload));
+ZBTxStatusResponse txStatus_C = ZBTxStatusResponse();
 
 void setup() {
   // Set the baud rate for the Serial port
@@ -42,7 +60,8 @@ void setup() {
   pinMode(valveNPK, OUTPUT);
   pinMode(valveWater, OUTPUT);
   // Set the baud rate for the Xbee serial comunication
-  XBee.begin(9600);
+  XBee_Serial.begin(9600);
+  xbee.setSerial(XBee_Serial);
 }
 
 void loop() {
@@ -168,10 +187,11 @@ void loop() {
   Serial.println("Water valve end");
   
   //-/-/-/-// Comunication //-/-/-/-//
-  if(XBee.available() > 0){
+  Serial.println("XBee Comunication");
+  /*if(XBee.available() > 0){
     int dato = XBee.read();
     Serial.write(char(dato));
-  }
+  }*/
   // Variables
   char temperature_string[8];
   char humidity_string[8];
@@ -221,9 +241,50 @@ void loop() {
   Serial.print("' and sizeoff: ");
   Serial.println(strlen(message));  
   delay(500);
-  XBee.listen();
+  
+  /*XBee.listen();
   delay(1000);
-  XBee.print(message);
+  XBee.print(message);*/
+  // Convertir cada carácter de la cadena a su representación hexadecimal
+  for (size_t i = 0; i < sizeof(message) - 1; i++) {
+    payload[i] = message[i];
+  }
+
+  xbee.send(zbTx_A);
+  
+  if (xbee.readPacket(1000)) {
+    if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
+      xbee.getResponse().getZBTxStatusResponse(txStatus_A);
+
+      uint8_t deliveryStatus = txStatus_A.getDeliveryStatus();
+      if (deliveryStatus == SUCCESS) {
+        Serial.println("Transmission successful.");
+      } else {
+        Serial.print("Transmission failed. Error code: ");
+        Serial.println(deliveryStatus, HEX);
+        describeError(deliveryStatus);
+      }
+    } else {
+      Serial.println("Response received, but not a ZB_TX_STATUS_RESPONSE.");
+    }
+  } else if (xbee.getResponse().isError()) {
+    Serial.print("Error reading packet. Error code: ");
+    Serial.println(xbee.getResponse().getErrorCode(), HEX);
+  } else {
+    Serial.println("No response received in time. Possible reasons:");
+    Serial.println("- Destination XBee not reachable.");
+    Serial.println("- Signal interference.");
+    Serial.println("- Incorrect XBee address.");
+    Serial.println("- Power issues.");
+  }
+  
+  /* Sleep Mode*/
+  /*Serial.println("Sleep for 2 minutes");
+  delay(200);
+  for (int i = 0 ;  i  <  16 ; i++){
+    LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+  }
+  delay(200);*/
 
   Serial.println("---------- END ----------"); 
   delay(5000);
@@ -241,4 +302,36 @@ float measure_value(byte temp_high_byte, byte temp_low_byte){
   //Serial.println(decimal_value);  
 
   return decimal_value;
+}
+
+void describeError(uint8_t code) {
+  switch (code) {
+    case 0x01:
+      Serial.println("MAC ACK failure");
+      break;
+    case 0x02:
+      Serial.println("CCA failure");
+      break;
+    case 0x15:
+      Serial.println("Invalid destination endpoint");
+      break;
+    case 0x21:
+      Serial.println("Network ACK failure");
+      break;
+    case 0x22:
+      Serial.println("Not joined to network");
+      break;
+    case 0x23:
+      Serial.println("Self-addressed");
+      break;
+    case 0x24:
+      Serial.println("Address not found");
+      break;
+    case 0x25:
+      Serial.println("Route not found");
+      break;
+    default:
+      Serial.println("Unknown error");
+      break;
+  }
 }
