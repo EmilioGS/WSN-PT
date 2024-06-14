@@ -200,7 +200,7 @@ void loop() {
   char nitrogen_string[8];
   char phosphorus_string[8];
   char potassium_string[8];
-  char message[16] ;
+  char message[16];
   
   //-/ Conversions /-//
   dtostrf(temperature_value, 5, 2, temperature_string);
