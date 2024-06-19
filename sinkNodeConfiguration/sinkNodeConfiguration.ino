@@ -165,7 +165,7 @@ void loop() {
             Serial.print((char)receivedData[i]);
           }
           Serial.println();
-
+          /*
           // Crear una cadena para almacenar el payload completo
           char payloadString[21];
           if (payloadLength < 22) {
@@ -221,7 +221,46 @@ void loop() {
           snprintf(cadena1, sizeof(cadena1), 
                    "{\"node\":\"%d\",\"sensorTemp\":\"%s\",\"sensorHum\":\"%s\",\"sensorPH\":\"%s\",\"N\":\"%s\",\"P\":\"%s\",\"K\":\"%s\"}",
                    idNode, temp_string, hum_string, pH_string, N_string, P_string, K_string);
+*/
+          // Crear una cadena para almacenar el payload completo
+          char payloadString[65];
+          if (payloadLength < 65) {
+            strncpy(payloadString, (char*)receivedData, payloadLength);
+            payloadString[payloadLength] = '\0';
+          } else {
+            strncpy(payloadString, (char*)receivedData, 64);
+            payloadString[64] = '\0';
+          }
+          
+          // Extraer los valores de los sensores del payload
+          char temp_string[6];
+          char hum_string[6];
+          char pH_string[6];
+          char N_string[6];
+          char P_string[6];
+          char K_string[6];
 
+          sscanf(payloadString, "%5[^|]|%5[^|]|%5[^|]|%5[^|]|%5[^|]|%5[^|]|", temp_string, hum_string, pH_string, N_string, P_string, K_string);
+
+          // Imprimir los valores extraídos
+          Serial.print("Temp: ");
+          Serial.print(temp_string);
+          Serial.print(", Hum: ");
+          Serial.print(hum_string);
+          Serial.print(", pH: ");
+          Serial.print(pH_string);
+          Serial.print(", N: ");
+          Serial.print(N_string);
+          Serial.print(", P: ");
+          Serial.print(P_string);
+          Serial.print(", K: ");
+          Serial.println(K_string);
+
+          // Concatenar los valores extraídos al JSON
+          char cadena1[256];
+          snprintf(cadena1, sizeof(cadena1), 
+                   "{\"node\":\"%d\",\"sensorTemp\":\"%s\",\"sensorHum\":\"%s\",\"sensorPH\":\"%s\",\"N\":\"%s\",\"P\":\"%s\",\"K\":\"%s\"}",
+                   idNode, temp_string, hum_string, pH_string, N_string, P_string, K_string);
           // Imprimir el JSON formado
           Serial.print("JSON: ");
           Serial.println(cadena1);

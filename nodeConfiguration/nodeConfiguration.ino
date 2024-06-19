@@ -13,6 +13,9 @@ Emilio Gallegos
 #include <XBee.h> // Andrewrapp's XBee Library 
 #include "LowPower.h" // Library to reduce current consuption
 
+// Switch to enable node components
+#define enable 6
+
 //RS485 to TTL Protocol converter control pins
 #define RE 8
 #define DE 7
@@ -35,17 +38,18 @@ SoftwareSerial XBee_Serial(3, 2); //Rx, Tx from the XBee module
 // Create the XBee object
 XBee xbee = XBee();
 
-uint8_t payload[40];
+uint8_t payload[34];
 
-// SH + SL Address of Alpha
-XBeeAddress64 addr64_Alpha = XBeeAddress64(0x0013a200, 0x4213da49);
-ZBTxRequest zbTx_A = ZBTxRequest(addr64_Alpha, payload, sizeof(payload));
-ZBTxStatusResponse txStatus_A = ZBTxStatusResponse();
-
-// SH + SL Address of Charlie
-XBeeAddress64 addr64_Charlie = XBeeAddress64(0x0013a200, 0x4213de41);
-ZBTxRequest zbTx_C = ZBTxRequest(addr64_Charlie, payload, sizeof(payload));
-ZBTxStatusResponse txStatus_C = ZBTxStatusResponse();
+/* Tx XBee */
+uint32_t msb = 0x0013a200;
+uint32_t lsb = 0x4213da49; // Alpha's 64bits address
+XBeeAddress64 addr64 = XBeeAddress64(msb, lsb);
+ZBTxRequest zbTx = ZBTxRequest(addr64, payload, sizeof(payload));
+ZBTxStatusResponse txStatus = ZBTxStatusResponse();
+/* Rx XBee */
+XBeeResponse response = XBeeResponse();
+ZBRxResponse rx = ZBRxResponse(); // create reusable response objects for responses we expect to handle 
+ModemStatusResponse msr = ModemStatusResponse();
 
 void setup() {
   // Set the baud rate for the Serial port
@@ -59,6 +63,8 @@ void setup() {
   // Set valves controls pins as output
   pinMode(valveNPK, OUTPUT);
   pinMode(valveWater, OUTPUT);
+  // Set enable
+  pinMode(enable, OUTPUT);  
   // Set the baud rate for the Xbee serial comunication
   XBee_Serial.begin(9600);
   xbee.setSerial(XBee_Serial);
@@ -66,7 +72,9 @@ void setup() {
 
 void loop() {
   Serial.println("---------- START ----------"); // Debugging print  
-  
+
+  digitalWrite(enable, HIGH); // Enable all node component
+
   //-/-/-/-// Sensors //-/-/-/-//
   // Variable used to store the temperature
   float temperature_value, humidity_value, temperature2_value, pH_value, nitrogen_value, phosphorus_value, potassium_value;
@@ -83,7 +91,7 @@ void loop() {
     
     // Check if the data measure is consistent
     if(isnan(temperature_value)){
-      Serial.print("Invalid temperature value");   
+      //Serial.print("Invalid temperature value");   
     }else{
       Serial.print("Measured temperature: ");
       Serial.println(temperature_value);
@@ -102,7 +110,7 @@ void loop() {
   int counter_attempts2 = 6;
   bool valid_frame = false;
   bool valid_values = false;
-  mod.listen();
+  mod.listen();// Change Software Serial
   do{// Cycle do-while to validate valid sensor frame
     //Define protocol converter to transmitter
     digitalWrite(DE,HIGH);
@@ -132,12 +140,11 @@ void loop() {
       //Serial.println("Invalid Frame");      
     }
 
-    humidity_value = measure_value(all_values[3], all_values[4]);
-    temperature2_value = measure_value(all_values[5], all_values[6]);
-    pH_value = measure_value(all_values[9], all_values[10]);
-    nitrogen_value = measure_value(all_values[11], all_values[12]);
-    phosphorus_value = measure_value(all_values[13], all_values[14]);
-    potassium_value = measure_value(all_values[15], all_values[16]);
+    humidity_value = measure_value(all_values[3], all_values[4], 1);
+    pH_value = measure_value(all_values[9], all_values[10], 1);
+    nitrogen_value = measure_value(all_values[11], all_values[12], 2);
+    phosphorus_value = measure_value(all_values[13], all_values[14], 2);
+    potassium_value = measure_value(all_values[15], all_values[16], 2);
     
     // Check if the data received is consistent
     if (pH_value >= 0 && pH_value <= 14 && temperature2_value >= 0 && temperature2_value <= 45){
@@ -158,8 +165,6 @@ void loop() {
   Serial.print(temperature_value);
   Serial.print(", humidity: ");
   Serial.print(humidity_value);
-  Serial.print(", temeprature2: ");
-  Serial.print(temperature2_value);
   Serial.print(", pH: ");
   Serial.print(pH_value);
   Serial.print(", Nitrogen: ");
@@ -169,133 +174,242 @@ void loop() {
   Serial.print(", Potassium: ");
   Serial.println(potassium_value);
   
-  //-/-/-/-// Actuators //-/-/-/-//
-
-  // Activate nutrient valve
-  Serial.println("NPK valve start");
-  digitalWrite(valveNPK, HIGH);
-  delay(3000);
-  digitalWrite(valveNPK, LOW);
-  Serial.println("NPK valve end");
-
-  delay(500);
-  // Activate water valve
-  Serial.println("Water valve start");
-  digitalWrite(valveWater, HIGH);
-  delay(3000);
-  digitalWrite(valveWater, LOW);
-  Serial.println("Water valve end");
-  
   //-/-/-/-// Comunication //-/-/-/-//
-  Serial.println("XBee Comunication");
-  /*if(XBee.available() > 0){
-    int dato = XBee.read();
-    Serial.write(char(dato));
-  }*/
   // Variables
   char temperature_string[8];
   char humidity_string[8];
-  char temperature2_string[8];
   char pH_string[8];
   char nitrogen_string[8];
   char phosphorus_string[8];
   char potassium_string[8];
-  char message[16];
+  char message[30];
   
   //-/ Conversions /-//
   dtostrf(temperature_value, 5, 2, temperature_string);
   dtostrf(humidity_value, 5, 2, humidity_string);
-  dtostrf(temperature2_value, 5, 2, temperature2_string);
   dtostrf(pH_value, 5, 2, pH_string);
   dtostrf(nitrogen_value, 5, 2, nitrogen_string);
   dtostrf(phosphorus_value, 5, 2, phosphorus_string);
   dtostrf(potassium_value, 5, 2, potassium_string);
-
-  /*Serial.print("Measured values strings: ");
-  Serial.println(temperature_string);
-  Serial.println(humidity_string);
-  Serial.println(temperature2_string);
-  Serial.println(pH_string);
-  Serial.println(nitrogen_string);
-  Serial.println(phosphorus_string);
-  Serial.println(potassium_string);  */      
-
+ 
   // String concatenation
   strcpy(message, temperature_string);
-  strcat(message, " ");
+  strcat(message, "|");
   strcat(message, humidity_string);
-  strcat(message, " ");
-  strcat(message, temperature2_string);
-  strcat(message, " ");
+  strcat(message, "|");
   strcat(message, pH_string);
-  strcat(message, " ");
+  strcat(message, "|");
   strcat(message, nitrogen_string);
-  strcat(message, " ");
+  strcat(message, "|");
   strcat(message, potassium_string);
-  strcat(message, " ");
+  strcat(message, "|");
   strcat(message, phosphorus_string);
-  
-  //Send message
+  strcat(message, "|");
+
   Serial.print("Concatenated string: '");
   Serial.print(message);  
-  Serial.print("' and sizeoff: ");
-  Serial.println(strlen(message));  
+  Serial.print("' and strlen: ");
+  Serial.print(strlen(message)); 
+  /*Serial.print("' and sizeof: "); 
+  Serial.println(sizeof(message));*/
   delay(500);
   
-  /*XBee.listen();
-  delay(1000);
-  XBee.print(message);*/
+  memset(payload, 0, sizeof(payload)); //Agregado
   // Convertir cada carácter de la cadena a su representación hexadecimal
-  for (size_t i = 0; i < sizeof(message) - 1; i++) {
-    payload[i] = message[i];
-  }
-
-  xbee.send(zbTx_A);
-  
-  if (xbee.readPacket(1000)) {
-    if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
-      xbee.getResponse().getZBTxStatusResponse(txStatus_A);
-
-      uint8_t deliveryStatus = txStatus_A.getDeliveryStatus();
-      if (deliveryStatus == SUCCESS) {
-        Serial.println("Transmission successful.");
-      } else {
-        Serial.print("Transmission failed. Error code: ");
-        Serial.println(deliveryStatus, HEX);
-        describeError(deliveryStatus);
-      }
-    } else {
-      Serial.println("Response received, but not a ZB_TX_STATUS_RESPONSE.");
+  for (size_t i = 0; i < strlen(message); i++) {
+    if(message[i] != ' '){
+      payload[i] = message[i];
     }
-  } else if (xbee.getResponse().isError()) {
-    Serial.print("Error reading packet. Error code: ");
-    Serial.println(xbee.getResponse().getErrorCode(), HEX);
-  } else {
-    Serial.println("No response received in time. Possible reasons:");
-    Serial.println("- Destination XBee not reachable.");
-    Serial.println("- Signal interference.");
-    Serial.println("- Incorrect XBee address.");
-    Serial.println("- Power issues.");
   }
   
+  Serial.println("---------- TX Start ----------");
+  //Send message
+  XBee_Serial.listen();
+  bool sinkConfirmation =  false; 
+  do{
+    Serial.println("Sending payload to Alpha");
+    //zbTx = ZBTxRequest(addr64, payload, sizeof(payload));   
+    zbTx = ZBTxRequest(addr64, payload, strlen(message));
+    xbee.send(zbTx);
+  
+    /*if (xbee.readPacket(200)){
+      if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
+        xbee.getResponse().getZBTxStatusResponse(txStatus);
+
+        uint8_t deliveryStatus = txStatus.getDeliveryStatus();
+        if (deliveryStatus == SUCCESS) {
+          Serial.println("Transmission successful.");
+          sinkConfirmation =  true;          
+        } else {
+          Serial.print("Transmission failed. Error code: ");
+          Serial.println(deliveryStatus, HEX);
+          describeError(deliveryStatus);
+        }
+      } else {
+        Serial.println("Response received, but not a ZB_TX_STATUS_RESPONSE.");
+      }
+    } else if (xbee.getResponse().isError()) {
+      Serial.print("Error reading packet. Error code: ");
+      Serial.println(xbee.getResponse().getErrorCode(), HEX);
+    } else {
+      Serial.println("No response received in time");
+    }*/
+
+    Serial.println("Waiting Alpha's confirmation");
+
+    xbee.readPacket(1000);
+    
+    if (xbee.getResponse().isAvailable()) {
+      // got something
+      uint8_t apId = xbee.getResponse().getApiId();
+      //if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
+      if (apId == ZB_RX_RESPONSE) {
+        // got a zb rx packet
+        // now fill our zb rx class
+        xbee.getResponse().getZBRxResponse(rx);
+            
+        if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED) {
+            Serial.println("The sender got an ACK");
+            // Access the payload
+            int payloadLength = rx.getDataLength();
+            uint8_t* receivedData = rx.getData();
+            
+            Serial.print("Received data: ");
+            for (int i = 0; i < payloadLength; i++) {
+              Serial.print((char)receivedData[i]);
+            }
+            Serial.println();
+
+            if((char)receivedData[0] == 'O'){
+              // Continue with Loop
+              sinkConfirmation = true;
+            } else{
+              Serial.println("Unknown action");              
+            }
+         
+        } else {
+            Serial.println("This is a ZigBee Receive Packet, but sender didn't get an ACK");       
+        }
+      } /*else if (xbee.getResponse().getApiId() == MODEM_STATUS_RESPONSE) {
+        xbee.getResponse().getModemStatusResponse(msr);
+        // the local XBee sends this response on certain events, like association/dissociation
+        if (msr.getStatus() == ASSOCIATED) {
+          Serial.println("This is a ZigBee Modem Status Frame with status 2");
+        } else if (msr.getStatus() == DISASSOCIATED) {
+          Serial.println("This is a ZigBee Modem Status Frame with status 3");
+        } else {
+          Serial.println("This is a ZigBee Modem Status Frame with a differnt status");
+        }
+      } */else if (apId == ZB_TX_STATUS_RESPONSE) {
+        xbee.getResponse().getZBTxStatusResponse(txStatus);
+
+        uint8_t deliveryStatus = txStatus.getDeliveryStatus();
+        if (deliveryStatus == SUCCESS) {
+          Serial.println("Transmission successful.");
+          sinkConfirmation =  true;          
+          Serial.println("Got a Tx Response from Alpha");
+        } else {
+          Serial.print("Transmission failed. Error code: ");
+          Serial.println(deliveryStatus, HEX);
+          describeError(deliveryStatus);
+        }
+      } else {///termino
+        Serial.println("It's an unknown ZigBee Frame");    
+      }
+    } else if (xbee.getResponse().isError()) {
+      //nss.print("Error reading packet.  Error code: ");  
+      //nss.println(xbee.getResponse().getErrorCode());
+    }
+
+    Serial.println("End of TX loop iteration."); 
+    delay(3000);
+  }while(!sinkConfirmation);
+
+  Serial.println("---------- TX End ----------");
+
+  Serial.println("---------- RX ----------");
+  
+  bool continue_to_sleep = false;
+  do{
+
+    xbee.readPacket(5000);
+    
+    if (xbee.getResponse().isAvailable()) {
+      // got something
+      if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
+        // got a zb rx packet
+        // now fill our zb rx class
+        xbee.getResponse().getZBRxResponse(rx);
+            
+        if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED) {
+            Serial.println("The sender got an ACK");
+            // Access the payload
+            int payloadLength = rx.getDataLength();
+            uint8_t* receivedData = rx.getData();
+            
+            Serial.print("Received data: ");
+            for (int i = 0; i < payloadLength; i++) {
+              Serial.print((char)receivedData[i]);
+            }
+            Serial.println();
+
+            //-/-/-/-// Actuators //-/-/-/-//
+
+            if((char)receivedData[0] == 'N'){
+              // Activate nutrient valve
+              actuatorActivation(1);
+            } else if((char)receivedData[0] == 'W'){
+              // Activate nutrient valve
+              actuatorActivation(0);
+            } else if((char)receivedData[0] == 'S'){
+              //Can get out of the do-while
+              continue_to_sleep = true;
+              Serial.println("Continue to Sleep Mode");
+            } else{
+              Serial.println("Unknown action");              
+            }
+         
+        } else {
+            Serial.println("This is a ZigBee Receive Packet, but sender didn't get an ACK");       
+        }
+      } else {
+        Serial.println("It's an unknown ZigBee Frame");    
+      }
+    } else if (xbee.getResponse().isError()) {
+      //nss.print("Error reading packet.  Error code: ");  
+      //nss.println(xbee.getResponse().getErrorCode());
+    }
+  
+    Serial.println("End of RX loop iteration."); 
+
+    delay(200);
+  }while(!continue_to_sleep);
+
   /* Sleep Mode*/
-  /*Serial.println("Sleep for 2 minutes");
+  digitalWrite(enable, LOW); // Disenable all node component
+  Serial.println("Sleep for 2 minutes");
   delay(200);
-  for (int i = 0 ;  i  <  16 ; i++){
+  //for (int i = 0 ;  i  <  16 ; i++){
     LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-  }
-  delay(200);*/
+  //}
+  delay(200);
 
   Serial.println("---------- END ----------"); 
   delay(5000);
 }
 
-float measure_value(byte temp_high_byte, byte temp_low_byte){
+float measure_value(byte temp_high_byte, byte temp_low_byte, int flag){
   // Combine first byte with the second one
   int combined_value = (temp_high_byte << 8) | temp_low_byte;
-    
-  // Convert value to float with decimal shift
-  float decimal_value = (float)combined_value/10;
+  float decimal_value = 0;
+
+  if(flag == 1){
+    // Convert value to float with decimal shift
+    decimal_value = (float)combined_value/10;    
+  } else if(flag == 2){  
+    // Convert value to float
+    decimal_value = (float)combined_value;
+  }
 
   // Print the returned value
   //Serial.print("Valor en flotante: ");
@@ -333,5 +447,24 @@ void describeError(uint8_t code) {
     default:
       Serial.println("Unknown error");
       break;
+  }
+}
+
+void actuatorActivation(int valve){
+    
+  if(valve == 1){
+    Serial.println("NPK valve start");   
+    digitalWrite(valveNPK, HIGH);
+    delay(5000);
+    digitalWrite(valveNPK, LOW);
+    Serial.println("Valve end"); 
+  }else if(valve == 0){
+    Serial.println("Water valve start");
+    digitalWrite(valveWater, HIGH);
+    delay(5000);
+    digitalWrite(valveWater, LOW);
+    Serial.println("Valve end");
+  }else{
+    Serial.println("Valve error");
   }
 }
