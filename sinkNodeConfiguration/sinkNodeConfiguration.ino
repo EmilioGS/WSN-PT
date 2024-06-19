@@ -165,7 +165,39 @@ void loop() {
             Serial.print((char)receivedData[i]);
           }
           Serial.println();
-          /*
+          ////////////////////
+          //Send OK to node
+          char messageO[] = {'O', 'K'};
+
+          for (size_t i = 0; i < sizeof(messageO); i++) {
+            payload[i] = messageO[i];
+          }  
+          Serial.println("Sending OK to Node");
+          zbTx = ZBTxRequest(rxAddress, payload, sizeof(payload));
+          xbee.send(zbTx);
+
+          if (xbee.readPacket(200)) {
+            if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
+              xbee.getResponse().getZBTxStatusResponse(txStatus);
+
+              uint8_t deliveryStatus = txStatus.getDeliveryStatus();
+              if (deliveryStatus == SUCCESS) {
+                Serial.println("Transmission successful.");
+              } else {
+                Serial.print("Transmission failed. Error code: ");
+                Serial.println(deliveryStatus, HEX);
+              }
+            } else {
+              Serial.println("Response received, but not a ZB_TX_STATUS_RESPONSE.");
+            }
+          } else if (xbee.getResponse().isError()) {
+            Serial.print("Error reading packet. Error code: ");
+            Serial.println(xbee.getResponse().getErrorCode(), HEX);
+          } else {
+            Serial.println("No response received in time.");
+          }
+          ///////////////////
+/*
           // Crear una cadena para almacenar el payload completo
           char payloadString[21];
           if (payloadLength < 22) {
@@ -477,7 +509,7 @@ void runQuery(XBeeAddress64 address, int idNode){
       // Wait for Valve activation
       Serial.println("Pause");  
       delay(6000);
-      }else{
+    }else{
       Serial.println("Empty data base");    
 
       //Send indication to Sleep

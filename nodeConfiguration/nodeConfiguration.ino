@@ -182,7 +182,7 @@ void loop() {
   char nitrogen_string[8];
   char phosphorus_string[8];
   char potassium_string[8];
-  char message[30];
+  char message[36];
   
   //-/ Conversions /-//
   dtostrf(temperature_value, 5, 2, temperature_string);
@@ -193,7 +193,7 @@ void loop() {
   dtostrf(potassium_value, 5, 2, potassium_string);
  
   // String concatenation
-  strcpy(message, temperature_string);
+  /*strcpy(message, temperature_string);
   strcat(message, "|");
   strcat(message, humidity_string);
   strcat(message, "|");
@@ -210,18 +210,43 @@ void loop() {
   Serial.print(message);  
   Serial.print("' and strlen: ");
   Serial.print(strlen(message)); 
-  /*Serial.print("' and sizeof: "); 
-  Serial.println(sizeof(message));*/
+  //Serial.print("' and sizeof: "); 
+  //Serial.println(sizeof(message));
   delay(500);
   
   memset(payload, 0, sizeof(payload)); //Agregado
   // Convertir cada carácter de la cadena a su representación hexadecimal
   for (size_t i = 0; i < strlen(message); i++) {
-    if(message[i] != ' '){
+    if(message[i] != ' ' && message[i] != 0x00){
       payload[i] = message[i];
     }
-  }
+  }*/
+  // Quitar espacios en blanco al principio de los valores convertidos
+  trimLeadingSpaces(temperature_string);
+  trimLeadingSpaces(humidity_string);
+  trimLeadingSpaces(pH_string);
+  trimLeadingSpaces(nitrogen_string);
+  trimLeadingSpaces(phosphorus_string);
+  trimLeadingSpaces(potassium_string);
   
+  // Concatenación de las cadenas
+  snprintf(message, sizeof(message), "%s|%s|%s|%s|%s|%s|", 
+          temperature_string, humidity_string, pH_string, 
+          nitrogen_string, phosphorus_string, potassium_string);
+
+  Serial.print("Concatenated string: '");
+  Serial.print(message);  
+  Serial.print("', strlen: ");
+  Serial.print(strlen(message)); 
+  Serial.print(", sizeof: ");
+  Serial.print(sizeof(message));
+  Serial.print(" and sizeof payload: ");
+  Serial.println(sizeof(payload));
+
+  // Copiar los datos al payload
+  memset(payload, 0, sizeof(payload));
+  strncpy((char*)payload, message, sizeof(payload));
+
   Serial.println("---------- TX Start ----------");
   //Send message
   XBee_Serial.listen();
@@ -229,7 +254,8 @@ void loop() {
   do{
     Serial.println("Sending payload to Alpha");
     //zbTx = ZBTxRequest(addr64, payload, sizeof(payload));   
-    zbTx = ZBTxRequest(addr64, payload, strlen(message));
+    //zbTx = ZBTxRequest(addr64, payload, strlen(message));
+    //zbTx = ZBTxRequest(addr64, payload, sizeof(message));
     xbee.send(zbTx);
   
     /*if (xbee.readPacket(200)){
@@ -300,7 +326,7 @@ void loop() {
         } else {
           Serial.println("This is a ZigBee Modem Status Frame with a differnt status");
         }
-      } */else if (apId == ZB_TX_STATUS_RESPONSE) {
+      } *//*else if (apId == ZB_TX_STATUS_RESPONSE) {
         xbee.getResponse().getZBTxStatusResponse(txStatus);
 
         uint8_t deliveryStatus = txStatus.getDeliveryStatus();
@@ -313,8 +339,8 @@ void loop() {
           Serial.println(deliveryStatus, HEX);
           describeError(deliveryStatus);
         }
-      } else {///termino
-        Serial.println("It's an unknown ZigBee Frame");    
+      } */else {///termino
+        Serial.println("It's an unexpected ZigBee Frame");    
       }
     } else if (xbee.getResponse().isError()) {
       //nss.print("Error reading packet.  Error code: ");  
@@ -417,6 +443,10 @@ float measure_value(byte temp_high_byte, byte temp_low_byte, int flag){
 
   return decimal_value;
 }
+/*
+float measure_value(byte high, byte low, int decimal) {
+  return ((high << 8) + low) / pow(10, decimal);
+}*/
 
 void describeError(uint8_t code) {
   switch (code) {
@@ -466,5 +496,19 @@ void actuatorActivation(int valve){
     Serial.println("Valve end");
   }else{
     Serial.println("Valve error");
+  }
+}
+
+void trimLeadingSpaces(char* str) {
+  char* start = str;
+  while (*start == ' ') {
+    start++;
+  }
+  if (start != str) {
+    char* dst = str;
+    while (*start) {
+      *dst++ = *start++;
+    }
+    *dst = '\0';
   }
 }
