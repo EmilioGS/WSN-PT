@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<data>
+  <loop>false</loop>
+  <repeat_times>1</repeat_times>
+  <repeat_period>500</repeat_period>
+  <frames_list>
+    <frame name="OK Charlie">
+      <payload>7E001010010013A2004213DE41FFFE00004F4B2E</payload>
+    </frame>
+    <frame name="Water Charlie">
+      <payload>7E001310010013A2004213DE41FFFE00005761746572C5</payload>
+    </frame>
+    <frame name="Nutri Charlie">
+      <payload>7E001310010013A2004213DE41FFFE00004E75747269B6</payload>
+    </frame>
+    <frame name="OK Bravo">
+      <payload>7E001010010013A2004213DBB5FFFE00004F4BBD</payload>
+    </frame>
+    <frame name="Ok Echo">
+      <payload>7E001010010013A2004213DB13FFFE00004F4B5F</payload>
+    </frame>
+    <frame name="Ok Delta">
+      <payload>7E001010010013A2004213C429FFFE00004F4B60</payload>
+    </frame>
+    <frame name="Sleep Echo">
+      <payload>7E001310010013A2004213DB13FFFE0000536C65657000</payload>
+    </frame>
+    <frame name="Water Echo">
+      <payload>7E001310010013A2004213DB13FFFE00005761746572F6</payload>
+    </frame>
+    <frame name="Nutri Echo">
+      <payload>7E001410010013A2004213DB13FFFE00004E757274726975</payload>
+    </frame>
+    <frame name="Water Delta">
+      <payload>7E001310010013A2004213C429FFFE00005761746572F7</payload>
+    </frame>
+    <frame name="Nutri Delta">
+      <payload>7E001310010013A2004213C429FFFE00004E75747269E8</payload>
+    </frame>
+    <frame name="Sleep Delta">
+      <payload>7E001310010013A2004213C429FFFE0000536C65657001</payload>
+    </frame>
+    <frame name="Water Bravo">
+      <payload>7E001310010013A2004213DBB5FFFE0000576174657254</payload>
+    </frame>
+    <frame name="Nutri Bravo">
+      <payload>7E001310010013A2004213DBB5FFFE00004E7574726945</payload>
+    </frame>
+    <frame name="Sleep Bravo">
+      <payload>7E001310010013A2004213DBB5FFFE0000536C6565705E</payload>
+    </frame>
+    <frame name="Sleep Charlie">
+      <payload>7E001310010013A2004213DE41FFFE0000536C656570CF</payload>
+    </frame>
+  </frames_list>
+</data>
