@@ -51,6 +51,15 @@ XBeeResponse response = XBeeResponse();
 ZBRxResponse rx = ZBRxResponse(); // create reusable response objects for responses we expect to handle 
 ModemStatusResponse msr = ModemStatusResponse();
 
+/* TxRx Counters */
+int loopIteration = 0;
+int sendData = 0;
+int receiveOK = 0;
+int receiveInstruction = 0; 
+int sendConfirmI = 0;
+int receiveInstructionSleep = 0;
+int sendConfirmS = 0;
+
 void setup() {
   // Set the baud rate for the Serial port
   Serial.begin(9600);
@@ -72,7 +81,7 @@ void setup() {
 
 void loop() {
   Serial.println("---------- START ----------"); // Debugging print  
-
+/*
   digitalWrite(enable, HIGH); // Enable all node component
 
   //-/-/-/-// Sensors //-/-/-/-//
@@ -131,6 +140,12 @@ void loop() {
       (void)mod.read();
       //Serial.println(".");
     }while(mod.available() != 0);
+
+    // Empty softwareserial buffer (Flush)
+    //while(mod.available() != 0) {
+      //(void)mod.read();
+      //Serial.println(".");
+    //}
 
     // Check if the received frame starts with the expected bytes
     if (all_values[0] == 0x01 && all_values[1] == 0x03 && all_values[2] == 0x0E) {
@@ -192,35 +207,6 @@ void loop() {
   dtostrf(phosphorus_value, 5, 2, phosphorus_string);
   dtostrf(potassium_value, 5, 2, potassium_string);
  
-  // String concatenation
-  /*strcpy(message, temperature_string);
-  strcat(message, "|");
-  strcat(message, humidity_string);
-  strcat(message, "|");
-  strcat(message, pH_string);
-  strcat(message, "|");
-  strcat(message, nitrogen_string);
-  strcat(message, "|");
-  strcat(message, potassium_string);
-  strcat(message, "|");
-  strcat(message, phosphorus_string);
-  strcat(message, "|");
-
-  Serial.print("Concatenated string: '");
-  Serial.print(message);  
-  Serial.print("' and strlen: ");
-  Serial.print(strlen(message)); 
-  //Serial.print("' and sizeof: "); 
-  //Serial.println(sizeof(message));
-  delay(500);
-  
-  memset(payload, 0, sizeof(payload)); //Agregado
-  // Convertir cada carácter de la cadena a su representación hexadecimal
-  for (size_t i = 0; i < strlen(message); i++) {
-    if(message[i] != ' ' && message[i] != 0x00){
-      payload[i] = message[i];
-    }
-  }*/
   // Quitar espacios en blanco al principio de los valores convertidos
   trimLeadingSpaces(temperature_string);
   trimLeadingSpaces(humidity_string);
@@ -233,19 +219,23 @@ void loop() {
   snprintf(message, sizeof(message), "%s|%s|%s|%s|%s|%s|", 
           temperature_string, humidity_string, pH_string, 
           nitrogen_string, phosphorus_string, potassium_string);
-
+*/
+  char message[] = {'2','2','.','5','|','1','0','.','0','|','3','.','5','|','1','2','3','.','0','|','1','2','3','.','0','|','1','2','3','.','0','|'};
   Serial.print("Concatenated string: '");
-  Serial.print(message);  
+  Serial.println(message);/*
   Serial.print("', strlen: ");
   Serial.print(strlen(message)); 
   Serial.print(", sizeof: ");
   Serial.print(sizeof(message));
   Serial.print(" and sizeof payload: ");
-  Serial.println(sizeof(payload));
+  Serial.println(sizeof(payload));*/
 
   // Copiar los datos al payload
-  memset(payload, 0, sizeof(payload));
-  strncpy((char*)payload, message, sizeof(payload));
+  /*memset(payload, 0, sizeof(payload));
+  strncpy((char*)payload, message, sizeof(payload));*/
+  for (size_t i = 0; i < sizeof(message); i++) {
+    payload[i] = message[i];
+  } 
 
   Serial.println("---------- TX Start ----------");
   //Send message
@@ -253,33 +243,9 @@ void loop() {
   bool sinkConfirmation =  false; 
   do{
     Serial.println("Sending payload to Alpha");
-    //zbTx = ZBTxRequest(addr64, payload, sizeof(payload));   
-    //zbTx = ZBTxRequest(addr64, payload, strlen(message));
-    //zbTx = ZBTxRequest(addr64, payload, sizeof(message));
+    //-/-/ Counter for sendData /-/-//
+    sendData++;
     xbee.send(zbTx);
-  
-    /*if (xbee.readPacket(200)){
-      if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
-        xbee.getResponse().getZBTxStatusResponse(txStatus);
-
-        uint8_t deliveryStatus = txStatus.getDeliveryStatus();
-        if (deliveryStatus == SUCCESS) {
-          Serial.println("Transmission successful.");
-          sinkConfirmation =  true;          
-        } else {
-          Serial.print("Transmission failed. Error code: ");
-          Serial.println(deliveryStatus, HEX);
-          describeError(deliveryStatus);
-        }
-      } else {
-        Serial.println("Response received, but not a ZB_TX_STATUS_RESPONSE.");
-      }
-    } else if (xbee.getResponse().isError()) {
-      Serial.print("Error reading packet. Error code: ");
-      Serial.println(xbee.getResponse().getErrorCode(), HEX);
-    } else {
-      Serial.println("No response received in time");
-    }*/
 
     Serial.println("Waiting Alpha's confirmation");
 
@@ -287,9 +253,7 @@ void loop() {
     
     if (xbee.getResponse().isAvailable()) {
       // got something
-      uint8_t apId = xbee.getResponse().getApiId();
-      //if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
-      if (apId == ZB_RX_RESPONSE) {
+      if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
         // got a zb rx packet
         // now fill our zb rx class
         xbee.getResponse().getZBRxResponse(rx);
@@ -309,6 +273,8 @@ void loop() {
             if((char)receivedData[0] == 'O'){
               // Continue with Loop
               sinkConfirmation = true;
+              //-/-/ Counter for sink node's OK /-/-//            
+              receiveOK++;
             } else{
               Serial.println("Unknown action");              
             }
@@ -316,37 +282,10 @@ void loop() {
         } else {
             Serial.println("This is a ZigBee Receive Packet, but sender didn't get an ACK");       
         }
-      } /*else if (xbee.getResponse().getApiId() == MODEM_STATUS_RESPONSE) {
-        xbee.getResponse().getModemStatusResponse(msr);
-        // the local XBee sends this response on certain events, like association/dissociation
-        if (msr.getStatus() == ASSOCIATED) {
-          Serial.println("This is a ZigBee Modem Status Frame with status 2");
-        } else if (msr.getStatus() == DISASSOCIATED) {
-          Serial.println("This is a ZigBee Modem Status Frame with status 3");
-        } else {
-          Serial.println("This is a ZigBee Modem Status Frame with a differnt status");
-        }
-      } *//*else if (apId == ZB_TX_STATUS_RESPONSE) {
-        xbee.getResponse().getZBTxStatusResponse(txStatus);
-
-        uint8_t deliveryStatus = txStatus.getDeliveryStatus();
-        if (deliveryStatus == SUCCESS) {
-          Serial.println("Transmission successful.");
-          sinkConfirmation =  true;          
-          Serial.println("Got a Tx Response from Alpha");
-        } else {
-          Serial.print("Transmission failed. Error code: ");
-          Serial.println(deliveryStatus, HEX);
-          describeError(deliveryStatus);
-        }
-      } */else {///termino
+      } else {
         Serial.println("It's an unexpected ZigBee Frame");    
       }
-    } else if (xbee.getResponse().isError()) {
-      //nss.print("Error reading packet.  Error code: ");  
-      //nss.println(xbee.getResponse().getErrorCode());
-    }
-
+    } 
     Serial.println("End of TX loop iteration."); 
     delay(3000);
   }while(!sinkConfirmation);
@@ -381,29 +320,79 @@ void loop() {
 
             //-/-/-/-// Actuators //-/-/-/-//
 
+            char messageI[] = {'I','n'};
+
+            for (size_t i = 0; i < sizeof(messageI); i++) {
+              payload[i] = messageI[i];
+            }              
+
             if((char)receivedData[0] == 'N'){
               // Activate nutrient valve
               actuatorActivation(1);
+              receiveInstruction++;
+              Serial.println("Confirm Indication receive to Sink Node");
+              zbTx = ZBTxRequest(addr64, payload, sizeof(payload));
+              //-/-/ Counter for confirmation /-/-//
+              sendConfirmI++;
+              xbee.send(zbTx);              
             } else if((char)receivedData[0] == 'W'){
               // Activate nutrient valve
               actuatorActivation(0);
+              receiveInstruction++;
+              Serial.println("Confirm Indication receive to Sink Node");
+              zbTx = ZBTxRequest(addr64, payload, sizeof(payload));
+              //-/-/ Counter for confirmation /-/-//
+              sendConfirmI++;
+              xbee.send(zbTx);
             } else if((char)receivedData[0] == 'S'){
               //Can get out of the do-while
               continue_to_sleep = true;
+              //-/-/ Counter for Sleep Mode /-/-//
+              receiveInstructionSleep++;
               Serial.println("Continue to Sleep Mode");
-            } else{
+
+              char messageS[] = {'C','o'};
+
+              for (size_t i = 0; i < sizeof(messageS); i++) {
+                payload[i] = messageS[i];
+              }  
+              Serial.println("Sending Confirmation for sleep to Sink Node");
+              zbTx = ZBTxRequest(addr64, payload, sizeof(payload));
+              //-/-/ Counter for confirmation /-/-//
+              sendConfirmS++;
+              xbee.send(zbTx);            
+            } else {
               Serial.println("Unknown action");              
             }
-         
+////////////////////////////////////////////////
+            /*if (xbee.readPacket(200)) {
+              if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
+                xbee.getResponse().getZBTxStatusResponse(txStatus);
+
+                uint8_t deliveryStatus = txStatus.getDeliveryStatus();
+                if (deliveryStatus == SUCCESS) {
+                  Serial.println("Transmission successful.");
+                } else {
+                  Serial.print("Transmission failed. Error code: ");
+                  Serial.println(deliveryStatus, HEX);
+                }
+              } else {
+                Serial.println("Response received, but not a ZB_TX_STATUS_RESPONSE.");
+              }
+            } else if (xbee.getResponse().isError()) {
+              Serial.print("Error reading packet. Error code: ");
+              Serial.println(xbee.getResponse().getErrorCode(), HEX);
+            } else {
+              Serial.println("No response received in time.");
+            }*/
+//////////////////////////////////////////////////
+            
         } else {
             Serial.println("This is a ZigBee Receive Packet, but sender didn't get an ACK");       
         }
       } else {
         Serial.println("It's an unknown ZigBee Frame");    
       }
-    } else if (xbee.getResponse().isError()) {
-      //nss.print("Error reading packet.  Error code: ");  
-      //nss.println(xbee.getResponse().getErrorCode());
     }
   
     Serial.println("End of RX loop iteration."); 
@@ -411,9 +400,28 @@ void loop() {
     delay(200);
   }while(!continue_to_sleep);
 
+  //-/-/ Counter for Loop /-/-//
+  loopIteration++;  
+  Serial.println("---------- RESULTS ----------");
+  Serial.print("Loop: ");
+  Serial.println(loopIteration);  
+  Serial.print("sendData: ");
+  Serial.println(sendData); 
+  Serial.print("receiveOK: ");
+  Serial.println(receiveOK);
+  Serial.print("receiveInstruction: ");
+  Serial.println(receiveInstruction); 
+  Serial.print("sendConfirmI: ");
+  Serial.println(sendConfirmI); 
+  Serial.print("receiveInstructionSleep: ");
+  Serial.println(receiveInstructionSleep);
+  Serial.print("sendConfirmS: ");
+  Serial.println(sendConfirmS); 
+  Serial.println("----------------------------");  
+
   /* Sleep Mode*/
   digitalWrite(enable, LOW); // Disenable all node component
-  Serial.println("Sleep for 2 minutes");
+  Serial.println("Sleep for 8segundos");
   delay(200);
   //for (int i = 0 ;  i  <  16 ; i++){
     LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
