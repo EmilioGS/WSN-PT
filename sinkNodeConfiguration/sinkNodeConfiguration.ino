@@ -1,4 +1,11 @@
-#include <HardwareSerial.h> //
+/// SINK NODE CONFIGURATION - ALPHA ///
+/*
+This node comunicates with Bravo, Charlie, Delta and Echo.
+PT: Sistema telemático para el monitoreo y control de huertos urbanos basado en una red inalámbrica de sensore
+Karla Benitez
+Emilio Gallegos
+*/
+#include <HardwareSerial.h>
 #include <XBee.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
@@ -16,7 +23,7 @@ uint8_t payload[5];
 
 /* Tx XBee */
 uint32_t msb = 0x0013a200;
-uint32_t lsb = 0x4213dbb5; // Cambia esto según tu configuración
+uint32_t lsb = 0x4213dbb5; // Bravos 
 XBeeAddress64 addr64 = XBeeAddress64(msb, lsb);
 ZBTxRequest zbTx = ZBTxRequest(addr64, payload, sizeof(payload));
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();
@@ -113,38 +120,27 @@ void setup() {
 
   // Begin WiFi section
   MYSQL_DISPLAY1("Connecting to", ssid);
-
   WiFi.begin(ssid, pass);
   
-  while (WiFi.status() != WL_CONNECTED) 
-  {
+  while (WiFi.status() != WL_CONNECTED){
     delay(500);
     MYSQL_DISPLAY0(".");
   }
 
   // print out info about the connection:
   MYSQL_DISPLAY1("Connected to network. My IP address is:", WiFi.localIP());
-
   MYSQL_DISPLAY3("Connecting to SQL Server @", server, ", Port =", server_port);
   MYSQL_DISPLAY5("User =", user, ", PW =", password, ", DB =", default_database);
 }
 
 void loop() {
   Serial.println("---------- START ----------");
-
   //print_wakeup_reason();
-
   Serial.println("---------- RX ----------");
-
   xbee.readPacket(5000);
     
   if (xbee.getResponse().isAvailable()) {
-    // got something
-    
     if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
-      // got a zb rx packet
-      
-      // now fill our zb rx class
       xbee.getResponse().getZBRxResponse(rx);
           
       if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED) {
@@ -164,7 +160,6 @@ void loop() {
             Serial.print((char)receivedData[i]);
           }
           Serial.println();
-          ////////////////////
           //Send OK to node
           char messageO[] = {'O', 'K'};
 
@@ -325,7 +320,6 @@ void loop() {
 
             /*MySQL connections*/
             MYSQL_DISPLAY("Connecting...");
-
             if (conn.connectNonBlocking(server, server_port, user, password) != RESULT_FAIL){
               delay(500);
               runQuery(rxAddress, idNode);
@@ -336,9 +330,7 @@ void loop() {
               MySQL_Connection conn((Client *)&client);
               MySQL_Query sql_query = MySQL_Query(&conn);              
             }
-
-            MYSQL_DISPLAY("\nFinishing DBActions");
-                  
+            MYSQL_DISPLAY("\nFinishing DB actions");       
       } else {
           Serial.println("This is a ZigBee Receive Packet, but sender didn't get an ACK");       
       }
@@ -546,7 +538,7 @@ void runQuery(XBeeAddress64 address, int idNode){
       }    
 
       Serial.println("---------- TX Start ----------");   
-      Serial.println("Sending payload via XBee...");
+      Serial.println("Sending payload with sleep indication via XBee...");
       zbTx = ZBTxRequest(address, payload, sizeof(payload));
       xbee.send(zbTx);
 
@@ -614,26 +606,19 @@ void runQuery(XBeeAddress64 address, int idNode){
   sql_query.close();
 }
 
-void runDelete(String delete_query)
-{
+void runDelete(String delete_query){
   MySQL_Query query_mem = MySQL_Query(&conn);
 
-  if (conn.connected())
-  {
+  if (conn.connected()){
     MYSQL_DISPLAY(delete_query);
     
     // Execute the query
-    if ( !query_mem.execute(delete_query.c_str()) )
-    {
+    if ( !query_mem.execute(delete_query.c_str()) ) {
       MYSQL_DISPLAY("Delete error");
-    }
-    else
-    {
+    } else {
       MYSQL_DISPLAY("Data Deleted.");
     }
-  }
-  else
-  {
+  } else {
     MYSQL_DISPLAY("Disconnected from Server. Can't delete.");
   }
 }

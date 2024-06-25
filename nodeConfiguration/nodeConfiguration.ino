@@ -1,7 +1,6 @@
-/// NODE CONFIGURATION - BRAVO ///
+/// SENSOR AND ACTUATOR NODE CONFIGURATION - Bravo, Charlie, Delta and Echo ///
 /*
-First sensor node in the WSN
-This node comunicates with the sink node, alfa, and with charlie.
+This node comunicates with the sink node.
 PT: Sistema telemático para el monitoreo y control de huertos urbanos basado en una red inalámbrica de sensore
 Karla Benitez
 Emilio Gallegos
@@ -191,37 +190,8 @@ void loop() {
   dtostrf(nitrogen_value, 5, 2, nitrogen_string);
   dtostrf(phosphorus_value, 5, 2, phosphorus_string);
   dtostrf(potassium_value, 5, 2, potassium_string);
- 
-  // String concatenation
-  /*strcpy(message, temperature_string);
-  strcat(message, "|");
-  strcat(message, humidity_string);
-  strcat(message, "|");
-  strcat(message, pH_string);
-  strcat(message, "|");
-  strcat(message, nitrogen_string);
-  strcat(message, "|");
-  strcat(message, potassium_string);
-  strcat(message, "|");
-  strcat(message, phosphorus_string);
-  strcat(message, "|");
 
-  Serial.print("Concatenated string: '");
-  Serial.print(message);  
-  Serial.print("' and strlen: ");
-  Serial.print(strlen(message)); 
-  //Serial.print("' and sizeof: "); 
-  //Serial.println(sizeof(message));
-  delay(500);
-  
-  memset(payload, 0, sizeof(payload)); //Agregado
-  // Convertir cada carácter de la cadena a su representación hexadecimal
-  for (size_t i = 0; i < strlen(message); i++) {
-    if(message[i] != ' ' && message[i] != 0x00){
-      payload[i] = message[i];
-    }
-  }*/
-  // Quitar espacios en blanco al principio de los valores convertidos
+  // Removing spaces
   trimLeadingSpaces(temperature_string);
   trimLeadingSpaces(humidity_string);
   trimLeadingSpaces(pH_string);
@@ -229,7 +199,7 @@ void loop() {
   trimLeadingSpaces(phosphorus_string);
   trimLeadingSpaces(potassium_string);
   
-  // Concatenación de las cadenas
+  // String concatenation
   snprintf(message, sizeof(message), "%s|%s|%s|%s|%s|%s|", 
           temperature_string, humidity_string, pH_string, 
           nitrogen_string, phosphorus_string, potassium_string);
@@ -253,9 +223,6 @@ void loop() {
   bool sinkConfirmation =  false; 
   do{
     Serial.println("Sending payload to Alpha");
-    //zbTx = ZBTxRequest(addr64, payload, sizeof(payload));   
-    //zbTx = ZBTxRequest(addr64, payload, strlen(message));
-    //zbTx = ZBTxRequest(addr64, payload, sizeof(message));
     xbee.send(zbTx);
   
     /*if (xbee.readPacket(200)){
@@ -286,12 +253,9 @@ void loop() {
     xbee.readPacket(1000);
     
     if (xbee.getResponse().isAvailable()) {
-      // got something
-      uint8_t apId = xbee.getResponse().getApiId();
-      //if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
-      if (apId == ZB_RX_RESPONSE) {
-        // got a zb rx packet
-        // now fill our zb rx class
+      //uint8_t apId = xbee.getResponse().getApiId();
+      if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
+      //if (apId == ZB_RX_RESPONSE) {
         xbee.getResponse().getZBRxResponse(rx);
             
         if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED) {
@@ -339,7 +303,7 @@ void loop() {
           Serial.println(deliveryStatus, HEX);
           describeError(deliveryStatus);
         }
-      } */else {///termino
+      } */else {
         Serial.println("It's an unexpected ZigBee Frame");    
       }
     } else if (xbee.getResponse().isError()) {
@@ -353,7 +317,7 @@ void loop() {
 
   Serial.println("---------- TX End ----------");
 
-  Serial.println("---------- RX ----------");
+  Serial.println("---------- RX Start ----------");
   int counterS = 0;
   int counter_attemptsS = 20;  
   bool continue_to_sleep = false;
