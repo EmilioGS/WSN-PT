@@ -3,6 +3,9 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <HTTPClient.h>
+#include "defines.h"
+#include "Credentials.h"
+#include <MySQL_Generic.h>
 
 // Inicializar HardwareSerial para la comunicación con XBee
 HardwareSerial XBeeSerial(1); // Usando UART1 del ESP32 (GPIO 16, 17)
@@ -23,10 +26,6 @@ ZBRxResponse rx = ZBRxResponse(); // create reusable response objects for respon
 ModemStatusResponse msr = ModemStatusResponse();
 
 /* Configuration required to connect to DB MySQL */
-#include "defines.h"
-#include "Credentials.h"
-
-#include <MySQL_Generic.h>
 #define USING_HOST_NAME     true
 
 #if USING_HOST_NAME
@@ -333,10 +332,12 @@ void loop() {
               conn.close();// close the connection
             }else{
               MYSQL_DISPLAY("\nConnect failed. Trying again on next iteration.");
+
+              MySQL_Connection conn((Client *)&client);
+              MySQL_Query sql_query = MySQL_Query(&conn);              
             }
 
-            MYSQL_DISPLAY("\nSleeping...");
-            MYSQL_DISPLAY("================================================");
+            MYSQL_DISPLAY("\nFinishing DBActions");
                   
       } else {
           Serial.println("This is a ZigBee Receive Packet, but sender didn't get an ACK");       
@@ -480,7 +481,7 @@ void runQuery(XBeeAddress64 address, int idNode){
       
       row_count++;           
 
-      Serial.println("Sending payload via XBee...");
+      Serial.println("Sending payload with indication via XBee...");
       zbTx = ZBTxRequest(address, payload, sizeof(payload));
       xbee.send(zbTx);
 
@@ -495,6 +496,31 @@ void runQuery(XBeeAddress64 address, int idNode){
             Serial.print("Transmission failed. Error code: ");
             Serial.println(deliveryStatus, HEX);
             describeError(deliveryStatus);
+//////////////////////////////////////////////////////////
+            Serial.println("Retring.....");
+            xbee.send(zbTx);
+            if (xbee.readPacket(200)) {
+              if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
+                xbee.getResponse().getZBTxStatusResponse(txStatus);
+
+                uint8_t deliveryStatus = txStatus.getDeliveryStatus();
+                if (deliveryStatus == SUCCESS) {
+                  Serial.println("Transmission successful.");
+                } else {
+                  Serial.print("Transmission failed. Error code: ");
+                  Serial.println(deliveryStatus, HEX);
+                  describeError(deliveryStatus);
+                }
+              } else {
+                Serial.println("Response received, but not a ZB_TX_STATUS_RESPONSE.");
+              }
+            } else if (xbee.getResponse().isError()) {
+              Serial.print("Error reading packet. Error code: ");
+              Serial.println(xbee.getResponse().getErrorCode(), HEX);
+            } else {
+              Serial.println("No response received in time.");
+            }
+/////////////////////////////////////////////////////////
           }
         } else {
           Serial.println("Response received, but not a ZB_TX_STATUS_RESPONSE.");
@@ -535,6 +561,31 @@ void runQuery(XBeeAddress64 address, int idNode){
             Serial.print("Transmission failed. Error code: ");
             Serial.println(deliveryStatus, HEX);
             describeError(deliveryStatus);
+/////////////////////////////////////////////////////////////////////////////////
+            Serial.println("Retring.....");
+            xbee.send(zbTx);
+            if (xbee.readPacket(200)) {
+              if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
+                xbee.getResponse().getZBTxStatusResponse(txStatus);
+
+                uint8_t deliveryStatus = txStatus.getDeliveryStatus();
+                if (deliveryStatus == SUCCESS) {
+                  Serial.println("Transmission successful.");
+                } else {
+                  Serial.print("Transmission failed. Error code: ");
+                  Serial.println(deliveryStatus, HEX);
+                  describeError(deliveryStatus);
+                }
+              } else {
+                Serial.println("Response received, but not a ZB_TX_STATUS_RESPONSE.");
+              }
+            } else if (xbee.getResponse().isError()) {
+              Serial.print("Error reading packet. Error code: ");
+              Serial.println(xbee.getResponse().getErrorCode(), HEX);
+            } else {
+              Serial.println("No response received in time.");
+            }
+/////////////////////////////////////////////////////////////////////////////////            
           }
         } else {
           Serial.println("Response received, but not a ZB_TX_STATUS_RESPONSE.");
@@ -549,7 +600,6 @@ void runQuery(XBeeAddress64 address, int idNode){
     }
   } while (row != NULL);
 
-  
   delay(500);
 
   // Delete the records that were read
