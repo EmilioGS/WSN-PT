@@ -354,7 +354,8 @@ void loop() {
   Serial.println("---------- TX End ----------");
 
   Serial.println("---------- RX ----------");
-  
+  int counterS = 0;
+  int counter_attemptsS = 20;  
   bool continue_to_sleep = false;
   do{
 
@@ -384,9 +385,11 @@ void loop() {
             if((char)receivedData[0] == 'N'){
               // Activate nutrient valve
               actuatorActivation(1);
+              counter_attemptsS--;
             } else if((char)receivedData[0] == 'W'){
               // Activate nutrient valve
               actuatorActivation(0);
+              counter_attemptsS--;
             } else if((char)receivedData[0] == 'S'){
               //Can get out of the do-while
               continue_to_sleep = true;
@@ -409,15 +412,19 @@ void loop() {
     Serial.println("End of RX loop iteration."); 
 
     delay(200);
-  }while(!continue_to_sleep);
+
+    counterS++;
+    Serial.print("Counter Sleep?: ");
+    Serial.println(counterS); 
+  }while(!continue_to_sleep && counterS < counter_attemptsS);
 
   /* Sleep Mode*/
   digitalWrite(enable, LOW); // Disenable all node component
-  Serial.println("Sleep for 2 minutes");
+  Serial.println("Sleep for 40 segundos");
   delay(200);
-  //for (int i = 0 ;  i  <  16 ; i++){
+  for (int i = 1 ;  i  <  5 ; i++){
     LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-  //}
+  }
   delay(200);
 
   Serial.println("---------- END ----------"); 
