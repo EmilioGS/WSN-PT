@@ -282,7 +282,19 @@ void loop() {
         } else {
             Serial.println("This is a ZigBee Receive Packet, but sender didn't get an ACK");       
         }
-      } else {
+      } else if(xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
+        xbee.getResponse().getZBTxStatusResponse(txStatus);
+
+        uint8_t deliveryStatus = txStatus.getDeliveryStatus();
+        if (deliveryStatus == SUCCESS) {
+          Serial.println("Transmission successful, ACK EN OK");
+          sinkConfirmation =  true;
+        } else {
+          Serial.print("Transmission failed. Error code: ");
+          Serial.println(deliveryStatus, HEX);
+          describeError(deliveryStatus);
+        }
+      } else{
         Serial.println("It's an unexpected ZigBee Frame");    
       }
     }else if(xbee.getResponse().isError()){
@@ -392,7 +404,22 @@ void loop() {
         } else {
             Serial.println("This is a ZigBee Receive Packet, but sender didn't get an ACK");       
         }
-      } else {
+      } else if(xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
+        xbee.getResponse().getZBTxStatusResponse(txStatus);
+
+        uint8_t deliveryStatus = txStatus.getDeliveryStatus();
+        if (deliveryStatus == SUCCESS) {
+          Serial.println("Transmission successful. ACK EN INDICACIONES");
+          continue_to_sleep = true;
+          //-/-/ Counter for Sleep Mode /-/-//
+          receiveInstructionSleep++;
+          Serial.println("Continue to Sleep Mode en ACK");
+        } else {
+          Serial.print("Transmission failed. Error code: ");
+          Serial.println(deliveryStatus, HEX);
+          describeError(deliveryStatus);
+        }
+      } else{
         Serial.println("It's an unknown ZigBee Frame");    
       }
     }else if (xbee.getResponse().isError()){

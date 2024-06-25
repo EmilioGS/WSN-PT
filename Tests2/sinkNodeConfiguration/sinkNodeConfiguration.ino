@@ -298,6 +298,18 @@ void loop() {
                 conn.close();// close the connection
               }else{
                 MYSQL_DISPLAY("\nConnect failed. Trying again on next iteration.");
+                char messageS[] = {'S', 'l', 'e', 'e', 'p'};
+                for (size_t i = 0; i < sizeof(messageS); i++) {
+                  payload[i] = messageS[i];
+                }
+                MySQL_Connection conn((Client *)&client);
+                // Create an instance of the cursor passing in the connection
+                MySQL_Query sql_query = MySQL_Query(&conn);    
+                delay(1000);
+                Serial.println("Sending to sleep without DB actions!!!!:(");
+                
+                zbTx = ZBTxRequest(rxAddress, payload, sizeof(payload));
+                xbee.send(zbTx);
               }
               MYSQL_DISPLAY("DB actions complete");     
         } else {
