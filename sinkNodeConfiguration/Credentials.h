@@ -15,12 +15,10 @@
 #ifndef Credentials_h
 #define Credentials_h
 
-char ssid[] = "Camilos";        // your network SSID (name)
-char pass[] = "password";        // your network password
-/*char ssid[] = "Totalplay-BCA4";
-char pass[] = "BP3qv6G7jM";*/
+char ssid[] = "your network SSID (name)"; 
+char pass[] = "your network password";  
 
-char user[]         = "huertalia";              // MySQL user login username
-char password[]     = "Proyecto5$";          // MySQL user login password
+char user[]         = "MySQL user login username";
+char password[]     = "MySQL user login password";
 
 #endif    //Credentials_h

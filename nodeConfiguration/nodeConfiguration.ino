@@ -384,11 +384,14 @@ void loop() {
 
   /* Sleep Mode*/
   digitalWrite(enable, LOW); // Disenable all node component
-  Serial.println("Sleep for 40 segundos");
+  Serial.println("Sleep for 40 segs");
   delay(200);
-  for (int i = 1 ;  i  <  5 ; i++){
-    LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-  }
+  LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+  LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+  LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+  LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+  LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+
   delay(200);
 
   Serial.println("---------- END ----------"); 
@@ -456,13 +459,13 @@ void actuatorActivation(int valve){
   if(valve == 1){
     Serial.println("NPK valve start");   
     digitalWrite(valveNPK, HIGH);
-    delay(5000);
+    delay(15000);
     digitalWrite(valveNPK, LOW);
     Serial.println("Valve end"); 
   }else if(valve == 0){
     Serial.println("Water valve start");
     digitalWrite(valveWater, HIGH);
-    delay(5000);
+    delay(15000);
     digitalWrite(valveWater, LOW);
     Serial.println("Valve end");
   }else{

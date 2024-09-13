@@ -36,15 +36,15 @@ ModemStatusResponse msr = ModemStatusResponse();
 #define USING_HOST_NAME     true
 
 #if USING_HOST_NAME
-  char server[] = "huertalia.mysql.database.azure.com"; // Azure URL
+  char server[] = "yourdatabse.mysql.database.azure.com"; // Azure URL
 #else
-  IPAddress server(192, 168, 2, 112);
+  IPAddress server(192, 168, X, X);
 #endif
 
 uint16_t server_port = 3306; //Azure DB Port
 
-char default_database[] = "huertalia"; // DB Name
-char default_table[]    = "Suministro2"; // DB Table
+char default_database[] = "Your_MySQL_Database"; // DB Name
+char default_table[]    = "Your_table"; // DB Table
 
 String column1   = "idSuministro";
 String column2   = "idNodo"; 
@@ -58,7 +58,7 @@ MySQL_Connection conn((Client *)&client);
 MySQL_Query sql_query = MySQL_Query(&conn);
 
 /* Configuration for HTTP method POST*/
-const char* serverName = "https://proyecto-terminal-896bb.web.app/update-sensor";
+const char* serverName = "https://your_web_page.com";
 
 unsigned long lastTime = 0;
 unsigned long timerDelay = 5000;
@@ -303,9 +303,30 @@ void loop() {
                 //char cadena1[] = "{\"node\":\"2\",\"sensorTemp\":\"22.5\",\"sensorHum\":\"100.0\",\"sensorPH\":\"7.5\",\"N\":\"123\",\"P\":\"123\",\"K\":\"123\"}";
                 int httpResponseCode = https.POST(cadena1);
 
-                if (httpResponseCode > 0) {
+                /*if (httpResponseCode > 0) {
                   Serial.print("HTTP Response code: ");
                   Serial.println(httpResponseCode);
+                } else {
+                  Serial.print("Error code: ");
+                  Serial.println(httpResponseCode);
+                }*/
+
+                if (httpResponseCode == 200){
+                  Serial.print("HTTP Response code: ");
+                  Serial.println(httpResponseCode);
+                  Serial.println("Firebase got the package");
+                } else if(httpResponseCode > 0) {
+                  Serial.print("HTTP Response code: ");
+                  Serial.println(httpResponseCode);
+                  Serial.println("POST Retrying ...");
+                  httpResponseCode = https.POST(cadena1);
+                  if (httpResponseCode > 0) {
+                    Serial.print("Retrying HTTP Response code: ");
+                    Serial.println(httpResponseCode);
+                  } else {
+                    Serial.print("Retrying Error code: ");
+                    Serial.println(httpResponseCode);
+                  }               
                 } else {
                   Serial.print("Error code: ");
                   Serial.println(httpResponseCode);
@@ -370,16 +391,16 @@ void loop() {
 int identifyNode(XBeeAddress64 address){
   int node = 0;
   switch(address.getLsb()){
-    case 0x4213dbb5: //Bravo
+    case 0x4213xxxx: //Bravo
       node = 2;
       break;
-    case 0x4213de41: //Charlie
+    case 0x4213xxxx: //Charlie
       node = 3;
       break;
-    case 0x4213c429: //Delta
+    case 0x4213xxxx: //Delta
       node = 4;
       break;
-    case 0x4213db13: //Echo
+    case 0x4213xxxx: //Echo
       node = 5;
   }
   return node;
@@ -526,7 +547,7 @@ void runQuery(XBeeAddress64 address, int idNode){
       Serial.println("---------- TX End ----------");
       // Wait for Valve activation
       Serial.println("Pause");  
-      delay(6000);
+      delay(16000);
     }else{
       Serial.println("Empty data base");    
 
